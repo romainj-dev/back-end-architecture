@@ -1,30 +1,89 @@
-# ApplyMate product requirements
+# ApplyMate
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Smarter job applications powered by AI. Generate tailored resumes and cover letters that pass AI recruiter filters. Track all your applications in one place.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/romainjcontactgmailcoms-projects/v0-apply-mate)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/swV7ulWxX45)
+## Tech Stack
 
-## Overview
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI)
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Form Validation**: Zod + React Hook Form
+- **Package Manager**: pnpm
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+## Getting Started
 
-## Deployment
+### Prerequisites
 
-Your project is live at:
+- Node.js 18+
+- pnpm (recommended) or npm/yarn
+- Supabase account and project
 
-**[https://vercel.com/romainjcontactgmailcoms-projects/v0-apply-mate](https://vercel.com/romainjcontactgmailcoms-projects/v0-apply-mate)**
+### Installation
 
-## Build your app
+1. Clone the repository:
 
-Continue building your app on:
+```bash
+git clone <repository-url>
+cd apply-mate
+```
 
-**[https://v0.app/chat/swV7ulWxX45](https://v0.app/chat/swV7ulWxX45)**
+2. Install dependencies:
 
-## How It Works
+```bash
+pnpm install
+```
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+3. Set up environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in your Supabase credentials in `.env.local`:
+
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (server-side only)
+
+4. Run the development server:
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm lint:fix` - Fix ESLint errors automatically
+- `pnpm type-check` - Run TypeScript type checking
+
+## Project Structure
+
+```
+apply-mate/
+├── app/              # Next.js app router pages and layouts
+├── components/       # Reusable UI components
+├── lib/             # Utilities, Supabase clients, shared logic
+├── hooks/           # Custom React hooks
+├── types/           # TypeScript type definitions
+└── public/          # Static assets
+```
+
+## Development Guidelines
+
+- Follow TypeScript strict mode
+- Use ESLint and Prettier for code formatting
+- Pre-commit hooks run linting and formatting automatically
+- See `.cursorrules` for AI coding standards and conventions
+
+## License
+
+Private project

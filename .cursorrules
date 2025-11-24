@@ -1,0 +1,137 @@
+# ApplyMate Coding Standards for AI-Generated Code
+
+## TypeScript & Type Safety
+
+- Always use TypeScript strict mode - no `any` types allowed
+- Define explicit types for all function parameters and return values
+- Use type inference only when types are obvious from context
+- Prefer `interface` for object shapes, `type` for unions/intersections
+- Use `zod` schemas for runtime validation and type inference
+- Always handle undefined/null cases explicitly
+- Use optional chaining (`?.`) and nullish coalescing (`??`) appropriately
+
+## React & Next.js Patterns
+
+- Prefer Server Components by default - use `'use client'` only when necessary
+- Use async/await for all data fetching in Server Components
+- Keep client components small and focused on interactivity
+- Use React hooks properly - follow rules of hooks
+- Prefer `useState` for local state, context for shared state
+- Use `useMemo` and `useCallback` only when performance is actually needed
+- Always handle loading and error states
+
+## Component Structure
+
+- One component per file
+- Use PascalCase for component names
+- Export components as named exports (not default)
+- Keep components focused on a single responsibility
+- Extract reusable logic into custom hooks
+- Place UI components in `components/ui/`, feature components in `components/`
+- Use shadcn/ui components as base, extend when needed
+
+## File Organization
+
+- Group related files in feature directories when appropriate
+- Keep utility functions in `lib/`
+- Custom hooks go in `hooks/`
+- Type definitions go in `types/`
+- Use path aliases (`@/`) for imports, not relative paths
+- No barrel exports (index.ts files) - import directly from source files
+
+## Naming Conventions
+
+- Components: PascalCase (`UserProfile`, `AuthForm`)
+- Functions/variables: camelCase (`getUserData`, `isAuthenticated`)
+- Constants: UPPER_SNAKE_CASE (`MAX_RETRIES`, `API_BASE_URL`)
+- Types/interfaces: PascalCase (`User`, `ApiResponse`)
+- Files: kebab-case for pages/routes, match export name for components
+
+## Data Fetching & Supabase
+
+- Always use `createClient()` from `@/lib/supabase/server` in Server Components
+- Use `createClient()` from `@/lib/supabase/client` in Client Components
+- Handle Supabase errors explicitly with try/catch
+- Use RLS (Row Level Security) policies in Supabase, never bypass with service role key unless absolutely necessary
+- Validate all user inputs with Zod schemas before database operations
+- Use environment variables via `@/lib/env` - never access `process.env` directly
+
+## Error Handling
+
+- Always handle errors explicitly - never silently fail
+- Use error boundaries for React error handling
+- Provide meaningful error messages to users
+- Log errors appropriately (console.error in dev, proper logging in prod)
+- Use Zod for input validation errors
+
+## Performance
+
+- Use Next.js Image component for all images
+- Implement proper loading states (skeletons, spinners)
+- Use dynamic imports for code splitting when appropriate
+- Avoid unnecessary re-renders - use React.memo sparingly
+- Optimize database queries - use indexes, avoid N+1 queries
+
+## Accessibility
+
+- Always include proper ARIA labels
+- Use semantic HTML elements
+- Ensure keyboard navigation works
+- Maintain proper heading hierarchy (h1 → h2 → h3)
+- Provide alt text for all images
+- Ensure color contrast meets WCAG AA standards
+
+## Code Style
+
+- Follow Prettier formatting (semi: false, singleQuote: true)
+- Maximum line length: 80 characters
+- Use trailing commas in arrays/objects
+- Prefer const over let, never use var
+- Use template literals for string interpolation
+- Destructure props and function parameters when appropriate
+
+## Security
+
+- Never expose sensitive keys in client-side code
+- Validate and sanitize all user inputs
+- Use Supabase RLS for database security
+- Implement proper authentication checks before protected routes
+- Use HTTPS in production
+- Follow OWASP security best practices
+
+## Comments & Documentation
+
+- Write self-documenting code - prefer clear naming over comments
+- Add JSDoc comments only for complex functions that need explanation
+- Document tricky parts, workarounds, and non-obvious decisions
+- Keep comments up-to-date with code changes
+- Use comments to explain "why", not "what"
+
+## Testing Considerations
+
+- Write testable code - pure functions where possible
+- Keep business logic separate from UI components
+- Make functions small and focused for easier testing
+- Use dependency injection for testability
+
+## Common Patterns
+
+- Use async/await over .then() chains
+- Prefer early returns over nested if statements
+- Use optional chaining for nested property access
+- Use nullish coalescing for default values
+- Destructure arrays/objects when accessing multiple properties
+
+## What NOT to Do
+
+- Don't use `any` type
+- Don't ignore TypeScript errors
+- Don't use `console.log` in production code
+- Don't commit console.log statements
+- Don't use inline styles - use Tailwind classes
+- Don't create unnecessary abstractions
+- Don't optimize prematurely
+- Don't skip error handling
+- Don't use default exports for components
+- Don't access process.env directly - use lib/env
+
