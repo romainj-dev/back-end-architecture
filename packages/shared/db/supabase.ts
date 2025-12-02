@@ -1,15 +1,15 @@
-import { env } from '@shared/env'
+import { loadEnv } from '@shared/env'
 
 export interface SupabaseConfig {
   url: string
   anonKey: string
-  serviceRoleKey: string
 }
 
+const baseEnv = loadEnv()
+
 export const supabaseConfig: SupabaseConfig = {
-  url: env.NEXT_PUBLIC_SUPABASE_URL,
-  anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
+  url: baseEnv.NEXT_PUBLIC_SUPABASE_URL,
+  anonKey: baseEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 }
 
 export function getSupabaseUrl(): string {
@@ -21,5 +21,5 @@ export function getSupabaseAnonKey(): string {
 }
 
 export function getSupabaseServiceRoleKey(): string {
-  return supabaseConfig.serviceRoleKey
+  return loadEnv().SUPABASE_SERVICE_ROLE_KEY
 }

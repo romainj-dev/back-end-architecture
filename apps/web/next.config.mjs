@@ -1,24 +1,11 @@
-import { dirname, resolve, join } from 'node:path'
-import { existsSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { config as loadEnv } from 'dotenv'
+import { loadRootEnv } from '../../packages/shared/env/load-root-env.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(__dirname, '..', '..')
 
-const envFilenames = [
-  `.env.${process.env.NODE_ENV ?? 'development'}.local`,
-  `.env.${process.env.NODE_ENV ?? 'development'}`,
-  '.env.local',
-  '.env'
-]
-
-for (const filename of envFilenames) {
-  const fullPath = join(repoRoot, filename)
-  if (existsSync(fullPath)) {
-    loadEnv({ path: fullPath, override: false })
-  }
-}
+loadRootEnv({ root: repoRoot })
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

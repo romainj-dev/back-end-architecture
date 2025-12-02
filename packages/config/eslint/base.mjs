@@ -3,7 +3,14 @@ import tseslint from 'typescript-eslint'
 
 export const baseConfig = tseslint.config(
   {
-    ignores: ['.next/**', 'node_modules/**', 'out/**', 'build/**', 'dist/**']
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'out/**',
+      'build/**',
+      'dist/**',
+      'packages/shared/**/*.d.ts'
+    ]
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -30,6 +37,26 @@ export const baseConfig = tseslint.config(
       ],
       'prefer-const': 'error',
       'no-var': 'error'
+    }
+  },
+  // CommonJS files
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'writable',
+        process: 'readonly',
+        console: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly'
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off'
     }
   }
 )

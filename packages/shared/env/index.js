@@ -1,25 +1,24 @@
-import { z } from 'zod'
-
-const envSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  NEXT_PUBLIC_APP_URL: z
+'use strict'
+Object.defineProperty(exports, '__esModule', { value: true })
+exports.env = void 0
+exports.loadEnv = loadEnv
+exports.loadGraphqlServiceEnv = loadGraphqlServiceEnv
+const zod_1 = require('zod')
+const envSchema = zod_1.z.object({
+  NEXT_PUBLIC_SUPABASE_URL: zod_1.z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: zod_1.z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: zod_1.z.string().min(1),
+  NEXT_PUBLIC_APP_URL: zod_1.z
     .string()
     .url()
     .optional()
     .default('http://localhost:3000'),
-  SUPABASE_JWT_SECRET: z.string().min(1).optional(),
-  SUPABASE_DB_URL: z.string().url().optional(),
-  GRAPHQL_MS_PORT: z.coerce.number().int().positive().default(4000),
-  GRAPHQL_MS_GRPC_URL: z.string().min(1).default('0.0.0.0:50051'),
+  SUPABASE_JWT_SECRET: zod_1.z.string().min(1).optional(),
+  SUPABASE_DB_URL: zod_1.z.string().url().optional(),
+  GRAPHQL_MS_PORT: zod_1.z.coerce.number().int().positive().default(4000),
+  GRAPHQL_MS_GRPC_URL: zod_1.z.string().min(1).default('0.0.0.0:50051'),
 })
-
-export type Env = z.infer<typeof envSchema>
-
-export function loadEnv(
-  source: Partial<Record<keyof Env, string | undefined>> = {}
-): Env {
+function loadEnv(source = {}) {
   const parsed = envSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL:
       source.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -38,7 +37,6 @@ export function loadEnv(
     GRAPHQL_MS_GRPC_URL:
       source.GRAPHQL_MS_GRPC_URL ?? process.env.GRAPHQL_MS_GRPC_URL,
   })
-
   if (!parsed.success) {
     console.error(
       '❌ Invalid environment variables:',
@@ -46,30 +44,10 @@ export function loadEnv(
     )
     throw new Error('Invalid environment variables')
   }
-
   return parsed.data
 }
-
-export const env = loadEnv()
-
-export interface GraphqlServiceEnv {
-  supabaseUrl: string
-  appUrl: string
-  supabaseServiceRoleKey: string
-  port: number
-  grpcUrl: string
-}
-
-interface GraphqlServiceEnvOverrides {
-  supabaseUrl?: string
-  supabaseServiceRoleKey?: string
-  port?: number
-  grpcUrl?: string
-}
-
-export function loadGraphqlServiceEnv(
-  overrides: GraphqlServiceEnvOverrides = {}
-): GraphqlServiceEnv {
+exports.env = loadEnv()
+function loadGraphqlServiceEnv(overrides = {}) {
   const parsed = loadEnv({
     NEXT_PUBLIC_SUPABASE_URL: overrides.supabaseUrl,
     SUPABASE_SERVICE_ROLE_KEY: overrides.supabaseServiceRoleKey,
@@ -77,7 +55,6 @@ export function loadGraphqlServiceEnv(
       overrides.port !== undefined ? String(overrides.port) : undefined,
     GRAPHQL_MS_GRPC_URL: overrides.grpcUrl,
   })
-
   return {
     supabaseUrl: parsed.NEXT_PUBLIC_SUPABASE_URL,
     appUrl: parsed.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
@@ -86,3 +63,4 @@ export function loadGraphqlServiceEnv(
     grpcUrl: parsed.GRAPHQL_MS_GRPC_URL,
   }
 }
+//# sourceMappingURL=index.js.map

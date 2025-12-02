@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { supabaseConfig } from '@shared/db/supabase'
+import { getSupabaseServiceRoleKey, supabaseConfig } from '@shared/db/supabase'
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -34,14 +34,10 @@ export async function createServiceRoleClient() {
   const { createClient: createSupabaseClient } = await import(
     '@supabase/supabase-js'
   )
-  return createSupabaseClient(
-    supabaseConfig.url,
-    supabaseConfig.serviceRoleKey,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  )
+  return createSupabaseClient(supabaseConfig.url, getSupabaseServiceRoleKey(), {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }

@@ -26,6 +26,7 @@ apps/*/.next/
 
 # misc
 .DS_Store
+packages/shared/**/*.js.map
 *.pem
 
 # debug
