@@ -1,89 +1,80 @@
-# ApplyMate
+# ApplyMate Monorepo
 
-Smarter job applications powered by AI. Generate tailored resumes and cover letters that pass AI recruiter filters. Track all your applications in one place.
+ApplyMate helps job seekers craft AI-ready applications (resumes, cover letters,
+status tracking) powered by custom workflows.
 
-## Tech Stack
+Phase 1 migrates the project into a Turborepo-managed workspace so we can grow
+the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui (Radix UI)
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Form Validation**: Zod + React Hook Form
-- **Package Manager**: pnpm
+## Tech Stack (Phase 1)
+
+- **Frontend**: Next.js 16 (App Router, Server Components) in `apps/web`
+- **Services**: Nest.js 10 placeholders for `graphql-ms`, `auth-ms`, `upload-ms`
+- **Gateway**: WunderGraph gateway placeholder in `apps/wundergraph`
+- **Shared Code**: TypeScript + Zod helpers in `packages/shared`
+- **Tooling**: Turborepo + pnpm, ESLint (flat config), Prettier, TypeScript
+
+## Repository Layout
+
+```
+.
+├── apps/
+│   ├── web/             # Production Next.js application
+│   ├── graphql-ms/      # GraphQL Nest.js service (placeholder schema)
+│   ├── auth-ms/         # Auth Nest.js service (REST placeholder)
+│   ├── upload-ms/       # Upload Nest.js service (REST placeholder)
+│   └── wundergraph/     # Federated gateway placeholder
+├── packages/
+│   ├── shared/          # Env + Supabase helpers, future shared libs
+│   └── config/          # Centralized tsconfig/eslint/prettier presets
+├── docs/                # Architecture & workflow docs
+├── turbo.json           # Turborepo pipeline
+├── tsconfig.base.json   # Root TS config with path aliases
+├── pnpm-workspace.yaml  # Workspace definition
+└── README.md
+```
 
 ## Getting Started
 
-### Prerequisites
+1. **Install prerequisites**
+   - Node.js ≥ 18.18
+   - pnpm ≥ 9
 
-- Node.js 18+
-- pnpm (recommended) or npm/yarn
-- Supabase account and project
+2. **Install dependencies**
 
-### Installation
+   ```bash
+   pnpm install
+   ```
 
-1. Clone the repository:
+3. **Configure environment variables**
 
-```bash
-git clone <repository-url>
-cd apply-mate
-```
+   ```bash
+   cp .env.example .env.local
+   ```
 
-2. Install dependencies:
+   Populate the Supabase keys (URL, anon key, service role key) plus any app
+   URL overrides.
 
-```bash
-pnpm install
-```
+4. **Run targets**
+   - `pnpm dev:web` — Next.js frontend at http://localhost:3000
+   - `pnpm dev:graphql-ms` — GraphQL microservice at http://localhost:4000/graphql
+   - `pnpm dev:auth-ms` — Auth microservice at http://localhost:4100/health
+   - `pnpm dev:upload-ms` — Upload microservice at http://localhost:4200/health
 
-3. Set up environment variables:
+## Workspace Scripts
 
-```bash
-cp .env.example .env.local
-```
+- `pnpm dev` — Run every `dev` task in parallel (Next + services)
+- `pnpm build | lint | test` — Run the respective Turborepo pipelines
+- `pnpm format` / `pnpm format:check` — Prettier formatting
+- `pnpm dev:<app>` — Filtered dev server for a single workspace (see above)
 
-Fill in your Supabase credentials in `.env.local`:
+## Documentation
 
-- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
-- `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (server-side only)
+- `docs/architecture.md` — High-level system overview + roadmap
+- `docs/dev-workflow.md` — How to work within the Turborepo workspace
 
-4. Run the development server:
+## Next Steps
 
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Available Scripts
-
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm lint:fix` - Fix ESLint errors automatically
-- `pnpm type-check` - Run TypeScript type checking
-
-## Project Structure
-
-```
-apply-mate/
-├── app/              # Next.js app router pages and layouts
-├── components/       # Reusable UI components
-├── lib/             # Utilities, Supabase clients, shared logic
-├── hooks/           # Custom React hooks
-├── types/           # TypeScript type definitions
-└── public/          # Static assets
-```
-
-## Development Guidelines
-
-- Follow TypeScript strict mode
-- Use ESLint and Prettier for code formatting
-- Pre-commit hooks run linting and formatting automatically
-- See `.cursorrules` for AI coding standards and conventions
-
-## License
-
-Private project
+Phase 2 will expand the GraphQL microservice with Supabase CRUD resolvers and
+integration tests, then Phase 3 will wire the Next.js BFF through Apollo /
+WunderGraph with generated types.

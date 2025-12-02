@@ -1,0 +1,11 @@
+{
+  "name": "wundergraph-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WunderGraph federation gateway placeholder",
+  "scripts": {
+    "dev": "echo \"WunderGraph gateway not implemented yet\"",
+    "build": "echo \"WunderGraph build not implemented yet\"",
+    "start": "echo \"WunderGraph start not implemented yet\""
+  }
+}

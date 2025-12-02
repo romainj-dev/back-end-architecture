@@ -1,0 +1,12 @@
+{
+  "name": "@apply-mate/shared",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "zod": "3.25.76"
+  }
+}

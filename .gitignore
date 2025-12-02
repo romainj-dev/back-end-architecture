@@ -1,17 +1,25 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+# turborepo / build caches
+.turbo/
+.turbo/cache
+
+# build outputs
+dist/
+*.d.ts.map
 
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# next.js build artifacts
+.next/
+out/
+apps/*/.next/
 
 # production
 /build
