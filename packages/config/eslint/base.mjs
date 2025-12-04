@@ -32,7 +32,7 @@ export const baseConfig = tseslint.config(
       'no-console': [
         'error',
         {
-          allow: ['warn', 'error']
+          allow: ['warn', 'error', 'info', 'debug']
         }
       ],
       'prefer-const': 'error',

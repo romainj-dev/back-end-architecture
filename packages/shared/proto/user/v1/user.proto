@@ -1,15 +1,21 @@
 syntax = "proto3";
 
-package user;
+package user.v1;
 
-message Empty {}
-
-message UserByIdRequest {
+message GetUserRequest {
   string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
 }
 
 message ListUsersRequest {
   int32 limit = 1;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
 }
 
 message User {
@@ -23,12 +29,8 @@ message User {
   map<string, string> metadata = 8;
 }
 
-message UserList {
-  repeated User users = 1;
-}
-
 service UserService {
-  rpc GetUserById (UserByIdRequest) returns (User);
-  rpc ListUsers (ListUsersRequest) returns (UserList);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
 }
 

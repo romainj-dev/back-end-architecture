@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package plan.v1;
+
+message ListPlansRequest {}
+
+message Plan {
+  string id = 1;
+  string code = 2;
+  int32 price = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
+
+message ListPlansResponse {
+  repeated Plan plans = 1;
+}
+
+service PlanService {
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+}

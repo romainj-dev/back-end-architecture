@@ -1,19 +1,35 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "connect:codegen": {
+      "cache": false,
+      "outputs": ["packages/shared/connect/gen/**"]
+    },
     "dev": {
+      "dependsOn": ["connect:codegen"],
       "cache": false,
       "persistent": true
     },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "connect:codegen"],
       "outputs": ["dist/**", ".next/**", "build/**"]
     },
     "lint": {
-      "outputs": []
+      "dependsOn": ["connect:codegen"],
+      "outputs": [],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.mjs",
+        "**/*.cjs"
+      ],
+      "env": ["TURBO_HASH"]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "connect:codegen"],
       "outputs": ["coverage/**"]
     }
   }

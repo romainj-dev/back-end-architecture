@@ -5,6 +5,7 @@ import { AppResolver } from './app.resolver'
 import { UserModule } from './user/user.module'
 import { SupabaseModule } from './supabase/supabase.module'
 import { TrpcModule } from './trpc/trpc.module'
+import { PlanModule } from './plan/plan.module'
 import { resolve } from 'node:path'
 import type { Request, Response } from 'express'
 
@@ -22,6 +23,7 @@ import type { Request, Response } from 'express'
     }),
     SupabaseModule,
     UserModule,
+    PlanModule,
     TrpcModule,
   ],
   providers: [AppResolver],

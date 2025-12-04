@@ -101,12 +101,12 @@ await client.user.create.mutate({
 
 ### gRPC
 
-Proto lives at `packages/shared/proto/user.proto`. Example invocation using `grpcurl`:
+Proto lives at `packages/shared/proto/user/v1/user.proto`. Example invocation using `grpcurl`:
 
 ```bash
 grpcurl -plaintext -d '{"id":"user-123"}' \
   -import-path packages/shared/proto \
-  -proto user.proto \
+  -proto user/v1/user.proto \
   localhost:50051 user.UserService/GetUserById
 ```
 

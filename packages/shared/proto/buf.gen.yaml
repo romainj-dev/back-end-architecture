@@ -1,0 +1,17 @@
+version: v1
+plugins:
+  - plugin: es
+    out: .
+    opt:
+      - target=ts
+      - import_extension=.ts
+  - plugin: connect-es
+    out: .
+    opt:
+      - target=ts
+      - import_extension=.ts
+  - plugin: connect-query
+    out: .
+    opt:
+      - target=ts
+      - import_extension=.ts

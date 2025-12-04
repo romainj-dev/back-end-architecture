@@ -3,11 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
+  "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
+  "scripts": {
+    "proto:generate": "rm -rf connect/gen && mkdir -p connect/gen && PATH=\"./node_modules/.bin:$PATH\" buf generate --template proto/buf.gen.yaml --config proto/buf.yaml -o connect/gen proto"
+  },
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "@bufbuild/protobuf": "^1.10.0",
+    "@connectrpc/connect": "^1.7.0",
     "@supabase/supabase-js": "^2.84.0",
+    "dotenv": "^16.4.5",
     "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@bufbuild/protoc-gen-es": "^1.10.0",
+    "@connectrpc/protoc-gen-connect-es": "^1.7.0",
+    "@connectrpc/protoc-gen-connect-query": "^1.4.2"
   }
 }

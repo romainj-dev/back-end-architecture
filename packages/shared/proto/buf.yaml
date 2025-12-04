@@ -1,0 +1,10 @@
+version: v1
+name: buf.build/applymate/shared
+lint:
+  use:
+    - STANDARD
+  except:
+    - PACKAGE_DIRECTORY_MATCH
+breaking:
+  use:
+    - FILE

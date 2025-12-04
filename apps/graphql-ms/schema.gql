@@ -24,9 +24,18 @@ type Mutation {
   updateUser(input: UpdateUserRequest!): User!
 }
 
+type PlanModel {
+  code: String!
+  createdAt: DateTime!
+  id: String!
+  price: Float!
+  updatedAt: DateTime!
+}
+
 type Query {
   currentUser: User
   health: String!
+  plans: [PlanModel!]!
   user(id: ID!): User!
   users(limit: Int): [User!]!
 }

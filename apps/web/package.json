@@ -7,6 +7,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "proto:codegen": "pnpm --workspace-root connect:codegen",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "next start",
@@ -14,6 +15,11 @@
     "supabase:types": "supabase gen types typescript --local > types/supabase.ts"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "1.10.0",
+    "@connectrpc/connect": "1.7.0",
+    "@connectrpc/connect-node": "1.7.0",
+    "@connectrpc/connect-query": "1.4.2",
+    "@connectrpc/connect-web": "1.7.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -44,6 +50,8 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.84.0",
+    "@tanstack/react-query": "^5.55.4",
+    "@tanstack/react-query-devtools": "^5.55.4",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",

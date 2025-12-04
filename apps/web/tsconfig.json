@@ -16,8 +16,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@shared/*": ["../..//packages/shared/*"],
-      "@config/*": ["../..//packages/config/*"]
+      "@shared/*": ["../../packages/shared/*"],
+      "@config/*": ["../../packages/config/*"],
+      "@rpc/*": ["../../packages/shared/connect/gen/*"],
+      "@queries/*": ["./hooks/queries/*"]
     }
   },
   "include": [

@@ -40,6 +40,8 @@ async function bootstrap() {
     'packages',
     'shared',
     'proto',
+    'user',
+    'v1',
     'user.proto'
   )
 
