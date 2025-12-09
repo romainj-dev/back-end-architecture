@@ -1,15 +1,15 @@
-import { loadEnv } from '@shared/env'
+import { loadEnv, loadPublicEnv } from '@shared/env'
 
 export interface SupabaseConfig {
   url: string
   anonKey: string
 }
 
-const baseEnv = loadEnv()
+const publicEnv = loadPublicEnv()
 
 export const supabaseConfig: SupabaseConfig = {
-  url: baseEnv.NEXT_PUBLIC_SUPABASE_URL,
-  anonKey: baseEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  url: publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+  anonKey: publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 }
 
 export function getSupabaseUrl(): string {

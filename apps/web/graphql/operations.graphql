@@ -1,0 +1,9 @@
+query GetPlans {
+  plans {
+    id
+    code
+    price
+    createdAt
+    updatedAt
+  }
+}

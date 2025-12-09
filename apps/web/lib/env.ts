@@ -1,1 +1,1 @@
-export { env } from '@shared/env'
+export { publicEnv as env } from '@shared/env'

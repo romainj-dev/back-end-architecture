@@ -7,7 +7,6 @@ import {
   type DefaultOptions,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { ConnectProvider } from './connect-provider'
 
 const defaultOptions: DefaultOptions = {
   queries: {
@@ -35,7 +34,7 @@ export function QueryProvider({ children }: QueryProviderProps) {
 
   return (
     <QueryClientProvider client={client}>
-      <ConnectProvider>{children}</ConnectProvider>
+      {children}
       {process.env.NODE_ENV !== 'production' ? (
         <ReactQueryDevtools
           initialIsOpen={false}

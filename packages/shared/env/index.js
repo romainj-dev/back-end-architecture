@@ -1,8 +1,10 @@
 'use strict'
 Object.defineProperty(exports, '__esModule', { value: true })
-exports.env = void 0
+exports.publicEnv = void 0
 exports.loadEnv = loadEnv
-exports.loadGraphqlServiceEnv = loadGraphqlServiceEnv
+exports.loadPublicEnv = loadPublicEnv
+exports.loadUserGraphqlServiceEnv = loadUserGraphqlServiceEnv
+exports.loadPlanGraphqlServiceEnv = loadPlanGraphqlServiceEnv
 const zod_1 = require('zod')
 const envSchema = zod_1.z.object({
   NEXT_PUBLIC_SUPABASE_URL: zod_1.z.string().url(),
@@ -15,8 +17,27 @@ const envSchema = zod_1.z.object({
     .default('http://localhost:3000'),
   SUPABASE_JWT_SECRET: zod_1.z.string().min(1).optional(),
   SUPABASE_DB_URL: zod_1.z.string().url().optional(),
-  GRAPHQL_MS_PORT: zod_1.z.coerce.number().int().positive().default(4000),
-  GRAPHQL_MS_GRPC_URL: zod_1.z.string().min(1).default('0.0.0.0:50051'),
+  USER_GRAPHQL_MS_PORT: zod_1.z.coerce.number().int().positive().default(4101),
+  PLAN_GRAPHQL_MS_PORT: zod_1.z.coerce.number().int().positive().default(4102),
+  MESH_PUBLIC_GRAPHQL_URL: zod_1.z
+    .string()
+    .url()
+    .optional()
+    .default('http://localhost:4103/graphql'),
+})
+const publicEnvSchema = zod_1.z.object({
+  NEXT_PUBLIC_SUPABASE_URL: zod_1.z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: zod_1.z.string().min(1),
+  NEXT_PUBLIC_APP_URL: zod_1.z
+    .string()
+    .url()
+    .optional()
+    .default('http://localhost:3000'),
+  MESH_PUBLIC_GRAPHQL_URL: zod_1.z
+    .string()
+    .url()
+    .optional()
+    .default('http://localhost:4103/graphql'),
 })
 function loadEnv(source = {}) {
   const parsed = envSchema.safeParse({
@@ -32,10 +53,12 @@ function loadEnv(source = {}) {
     SUPABASE_JWT_SECRET:
       source.SUPABASE_JWT_SECRET ?? process.env.SUPABASE_JWT_SECRET,
     SUPABASE_DB_URL: source.SUPABASE_DB_URL ?? process.env.SUPABASE_DB_URL,
-    GRAPHQL_MS_PORT:
-      source.GRAPHQL_MS_PORT ?? process.env.GRAPHQL_MS_PORT ?? undefined,
-    GRAPHQL_MS_GRPC_URL:
-      source.GRAPHQL_MS_GRPC_URL ?? process.env.GRAPHQL_MS_GRPC_URL,
+    USER_GRAPHQL_MS_PORT:
+      source.USER_GRAPHQL_MS_PORT ?? process.env.USER_GRAPHQL_MS_PORT,
+    PLAN_GRAPHQL_MS_PORT:
+      source.PLAN_GRAPHQL_MS_PORT ?? process.env.PLAN_GRAPHQL_MS_PORT,
+    MESH_PUBLIC_GRAPHQL_URL:
+      source.MESH_PUBLIC_GRAPHQL_URL ?? process.env.MESH_PUBLIC_GRAPHQL_URL,
   })
   if (!parsed.success) {
     console.error(
@@ -46,21 +69,44 @@ function loadEnv(source = {}) {
   }
   return parsed.data
 }
-exports.env = loadEnv()
-function loadGraphqlServiceEnv(overrides = {}) {
-  const parsed = loadEnv({
-    NEXT_PUBLIC_SUPABASE_URL: overrides.supabaseUrl,
-    SUPABASE_SERVICE_ROLE_KEY: overrides.supabaseServiceRoleKey,
-    GRAPHQL_MS_PORT:
-      overrides.port !== undefined ? String(overrides.port) : undefined,
-    GRAPHQL_MS_GRPC_URL: overrides.grpcUrl,
+function loadPublicEnv(source = {}) {
+  const parsed = publicEnvSchema.safeParse({
+    NEXT_PUBLIC_SUPABASE_URL:
+      source.NEXT_PUBLIC_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      source.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_APP_URL:
+      source.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_APP_URL,
+    MESH_PUBLIC_GRAPHQL_URL:
+      source.MESH_PUBLIC_GRAPHQL_URL ?? process.env.MESH_PUBLIC_GRAPHQL_URL,
   })
+  if (!parsed.success) {
+    console.error(
+      '❌ Invalid public environment variables:',
+      parsed.error.flatten().fieldErrors
+    )
+    throw new Error('Invalid public environment variables')
+  }
+  return parsed.data
+}
+exports.publicEnv = loadPublicEnv()
+function loadUserGraphqlServiceEnv() {
+  const parsed = loadEnv()
   return {
     supabaseUrl: parsed.NEXT_PUBLIC_SUPABASE_URL,
     appUrl: parsed.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
     supabaseServiceRoleKey: parsed.SUPABASE_SERVICE_ROLE_KEY,
-    port: parsed.GRAPHQL_MS_PORT,
-    grpcUrl: parsed.GRAPHQL_MS_GRPC_URL,
+    port: parsed.USER_GRAPHQL_MS_PORT,
+  }
+}
+function loadPlanGraphqlServiceEnv() {
+  const parsed = loadEnv()
+  return {
+    supabaseUrl: parsed.NEXT_PUBLIC_SUPABASE_URL,
+    appUrl: parsed.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+    supabaseServiceRoleKey: parsed.SUPABASE_SERVICE_ROLE_KEY,
+    port: parsed.PLAN_GRAPHQL_MS_PORT,
   }
 }
 //# sourceMappingURL=index.js.map

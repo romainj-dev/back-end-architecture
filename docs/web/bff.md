@@ -1,8 +1,71 @@
-# Web BFF Architecture (Phase 3)
+# Web Architecture – Mesh Gateway (Current)
 
-This document describes the Connect RPC + TanStack Query stack used in `apps/web` for data fetching, aligned with [Cosmo Studio](https://github.com/wundergraph/cosmo/tree/main/studio) patterns.
+The web app calls a single public GraphQL endpoint exposed by the Mesh gateway. Browser requests hit the Next.js same-origin proxy at `/api/mesh/graphql`, which forwards to Mesh. Mesh fans out to downstream services over GraphQL (user, plan) and Connect/gRPC (upload), and adapts streaming to GraphQL subscriptions.
 
 ## Overview
+
+- Public entrypoint: Mesh gateway (`apps/mesh-gateway`), proxied from `/api/mesh/graphql`.
+- Downstream protocols: GraphQL (user, plan) and Connect/gRPC (upload).
+- Streaming: Upload progress is streamed from the Connect service and exposed as a GraphQL subscription (`uploadStatus`) over WS/SSE.
+- Federation alignment: Mesh sources map 1:1 to future subgraphs (user, plan, upload-adapter). Keep SDL modular to ease router adoption.
+
+## File Structure (relevant parts)
+
+```
+apps/web/
+├── lib/graphql/client.ts          # Calls Mesh (proxy in browser, direct in SSR)
+├── graphql/operations.graphql     # Frontend operations (Mesh schema)
+├── graphql/generated/types.ts     # Generated types from Mesh schema
+├── hooks/queries/use-plans-query.ts # Uses Mesh GET_PLANS via TanStack Query
+
+apps/mesh-gateway/
+├── .meshrc.ts                     # Mesh config (user, plan GraphQL; upload Connect)
+├── mesh.resolvers.ts              # Upload subscription adapter (Connect -> GraphQL)
+
+packages/shared/
+├── proto/upload/v1/upload.proto   # Connect/gRPC contract for upload
+├── connect/gen/upload/v1/         # Generated Connect client (used by Mesh)
+└── graphql/                       # Schemas synced from user/plan services
+```
+
+## Data Flow
+
+```
+Browser → Next.js proxy (/api/mesh/graphql) → Mesh Gateway
+  → user/plan over GraphQL
+  → upload over Connect/gRPC (stream → GraphQL subscription)
+```
+
+## Codegen
+
+- Mesh build: `pnpm mesh:build`
+- Frontend GraphQL types: `pnpm graphql:codegen:web` (builds Mesh schema, generates types)
+- Connect (upload) codegen: `pnpm connect:codegen` or `pnpm --filter @apply-mate/shared proto:generate`
+
+## Streaming
+
+- Mesh subscription `uploadStatus` is backed by the Connect upload stream and exposed over WS/SSE.
+
+## Federation Notes
+
+- Treat each Mesh source as a future subgraph:
+  - `UserService` → `user` subgraph (native GraphQL)
+  - `PlanService` → `plan` subgraph (native GraphQL)
+  - `UploadService` → adapter subgraph exposing GraphQL over the Connect stream
+- Keep contracts (types/boundaries) aligned with intended subgraph ownership to minimize reshaping during router adoption.
+
+# Web Architecture – Legacy BFF (Deprecated) and Current Mesh Gateway
+
+This document captures the earlier Connect RPC + TanStack Query BFF used in `apps/web`. It is kept for reference. The current public entrypoint is the Mesh gateway (GraphQL) and the web app now calls Mesh directly (via the `/api/mesh/graphql` proxy). Remove or refactor BFF pieces as Mesh adoption completes.
+
+## Current (Mesh) overview
+
+- Public GraphQL endpoint: Mesh gateway (`apps/mesh-gateway`), exposed via Next.js proxy at `/api/mesh/graphql`.
+- Downstream protocols: GraphQL (user, plan) + Connect/gRPC (upload).
+- Streaming: Mesh adapts Connect upload stream to a GraphQL subscription (`uploadStatus`) over WS/SSE.
+- Future federation: Mesh source boundaries map 1:1 to future subgraphs (user, plan, upload-adapter).
+
+## Legacy BFF Overview (for reference)
 
 The web app uses a **Backend-for-Frontend (BFF)** pattern where:
 
@@ -61,18 +124,14 @@ apps/web/
     └── plan-service.ts        # Service implementation (calls GraphQL MS)
 
 packages/shared/
-├── connect/gen/               # Buf-generated Connect clients
-│   ├── plan/v1/
-│   │   ├── plan_pb.ts
-│   │   └── plan_connect.ts
-│   └── user/v1/
-│       ├── user_pb.ts
-│       └── user_connect.ts
+├── connect/gen/               # Buf-generated Connect clients (upload only)
+│   └── upload/v1/
+│       ├── upload_pb.ts
+│       └── upload_connect.ts
 ├── proto/
 │   ├── buf.yaml               # Buf module config
 │   ├── buf.gen.yaml           # Buf codegen config
-│   ├── plan/v1/plan.proto
-│   └── user/v1/user.proto
+│   └── upload/v1/upload.proto # Connect/gRPC (Mesh uses this)
 └── schemas/
     └── plan.ts                # Zod schema for validation
 ```

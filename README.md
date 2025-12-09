@@ -6,11 +6,11 @@ status tracking) powered by custom workflows.
 Phase 1 migrates the project into a Turborepo-managed workspace so we can grow
 the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
 
-## Tech Stack (Phase 1)
+## Tech Stack (current snapshot)
 
 - **Frontend**: Next.js 16 (App Router, Server Components) in `apps/web`
-- **Services**: Nest.js 10 placeholders for `graphql-ms`, `auth-ms`, `upload-ms`
-- **Gateway**: WunderGraph gateway placeholder in `apps/wundergraph`
+- **Gateway**: GraphQL Mesh in `apps/mesh-gateway`
+- **Services**: Nest.js for `user-graphql-ms`, `plan-graphql-ms`, `auth-ms`, `upload-ms`
 - **Shared Code**: TypeScript + Zod helpers in `packages/shared`
 - **Tooling**: Turborepo + pnpm, ESLint (flat config), Prettier, TypeScript
 
@@ -20,10 +20,11 @@ the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
 .
 ├── apps/
 │   ├── web/             # Production Next.js application
-│   ├── graphql-ms/      # GraphQL Nest.js service (placeholder schema)
-│   ├── auth-ms/         # Auth Nest.js service (REST placeholder)
-│   ├── upload-ms/       # Upload Nest.js service (REST placeholder)
-│   └── wundergraph/     # Federated gateway placeholder
+│   ├── user-graphql-ms/ # User GraphQL Nest.js service
+│   ├── plan-graphql-ms/ # Plan GraphQL Nest.js service
+│   ├── auth-ms/         # Auth Nest.js service (placeholder)
+│   ├── upload-ms/       # Upload Nest.js service (Connect/gRPC)
+│   └── mesh-gateway/    # GraphQL Mesh gateway
 ├── packages/
 │   ├── shared/          # Env + Supabase helpers, future shared libs
 │   └── config/          # Centralized tsconfig/eslint/prettier presets
@@ -56,10 +57,13 @@ the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
    URL overrides.
 
 4. **Run targets**
-   - `pnpm dev:web` — Next.js frontend at http://localhost:3000
-   - `pnpm dev:graphql-ms` — GraphQL microservice at http://localhost:4000/graphql
-   - `pnpm dev:auth-ms` — Auth microservice at http://localhost:4100/health
-   - `pnpm dev:upload-ms` — Upload microservice at http://localhost:4200/health
+
+- `pnpm dev:web` — Next.js frontend at http://localhost:3000
+- `pnpm dev:mesh` — Mesh gateway at http://localhost:4103/graphql
+- `pnpm dev:user-graphql-ms` — User GraphQL service at http://localhost:4101/graphql
+- `pnpm dev:plan-graphql-ms` — Plan GraphQL service at http://localhost:4102/graphql
+- `pnpm dev:auth-ms` — Auth microservice (placeholder)
+- `pnpm dev:upload-ms` — Upload microservice (Connect/gRPC placeholder)
 
 ## Workspace Scripts
 
@@ -75,6 +79,4 @@ the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
 
 ## Next Steps
 
-Phase 2 will expand the GraphQL microservice with Supabase CRUD resolvers and
-integration tests, then Phase 3 will wire the Next.js BFF through Apollo /
-WunderGraph with generated types.
+Current focus: Mesh gateway integration, frontend GraphQL codegen, and service hardening (auth, CORS, streaming).

@@ -1,0 +1,65 @@
+schema @transport(subgraph: "UploadService", kind: "grpc", location: "http://localhost:50052", options: {requestTimeout: 200000, useHTTPS: false, roots: [{name: "Root0", rootJson: "{\"nested\":{\"upload\":{\"nested\":{\"v1\":{\"nested\":{\"UploadService\":{\"methods\":{\"StartUpload\":{\"requestType\":\"UploadChunk\",\"requestStream\":true,\"responseType\":\"UploadResult\",\"comment\":null},\"WatchUpload\":{\"requestType\":\"UploadStatusRequest\",\"responseType\":\"UploadStatus\",\"responseStream\":true,\"comment\":null}},\"comment\":null},\"UploadChunk\":{\"fields\":{\"upload_id\":{\"type\":\"string\",\"id\":1,\"comment\":null},\"chunk\":{\"type\":\"bytes\",\"id\":2,\"comment\":null},\"offset\":{\"type\":\"int64\",\"id\":3,\"comment\":null},\"last\":{\"type\":\"bool\",\"id\":4,\"comment\":null}},\"comment\":null},\"UploadResult\":{\"fields\":{\"upload_id\":{\"type\":\"string\",\"id\":1,\"comment\":null},\"status\":{\"type\":\"string\",\"id\":2,\"comment\":null},\"message\":{\"type\":\"string\",\"id\":3,\"comment\":null}},\"comment\":null},\"UploadStatusRequest\":{\"fields\":{\"upload_id\":{\"type\":\"string\",\"id\":1,\"comment\":null}},\"comment\":null},\"UploadStatus\":{\"fields\":{\"upload_id\":{\"type\":\"string\",\"id\":1,\"comment\":null},\"status\":{\"type\":\"string\",\"id\":2,\"comment\":null},\"progress\":{\"type\":\"int32\",\"id\":3,\"comment\":null},\"message\":{\"type\":\"string\",\"id\":4,\"comment\":null}},\"comment\":null}}}}}}}"}]}) {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+"""
+Directs the executor to stream plural fields when the `if` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  upload_v1_UploadService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService")
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Mutation {
+  upload_v1_UploadService_StartUpload(input: File): upload__v1__UploadResult @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "StartUpload", responseStream: false)
+  upload_v1_UploadService_WatchUpload(input: upload__v1__UploadStatusRequest_Input): [upload__v1__UploadStatus] @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "WatchUpload", responseStream: true)
+}
+
+type upload__v1__UploadResult {
+  upload_id: String
+  status: String
+  message: String
+}
+
+scalar File
+
+type upload__v1__UploadStatus {
+  upload_id: String
+  status: String
+  progress: Int
+  message: String
+}
+
+input upload__v1__UploadStatusRequest_Input {
+  upload_id: String
+}
+
+type Subscription {
+  upload_v1_UploadService_WatchUpload(input: upload__v1__UploadStatusRequest_Input): upload__v1__UploadStatus @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "WatchUpload", responseStream: true)
+}
+
+scalar TransportOptions

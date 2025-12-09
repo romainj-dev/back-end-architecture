@@ -7,7 +7,7 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "proto:generate": "rm -rf connect/gen && mkdir -p connect/gen && PATH=\"./node_modules/.bin:$PATH\" buf generate --template proto/buf.gen.yaml --config proto/buf.yaml -o connect/gen proto"
+    "proto:generate": "rm -rf connect/gen && mkdir -p connect/gen && PATH=\"./node_modules/.bin:$PATH\" buf generate --template proto/buf.gen.yaml --config proto/buf.yaml -o connect/gen proto/upload"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^1.10.0",

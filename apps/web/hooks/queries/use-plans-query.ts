@@ -1,19 +1,19 @@
 'use client'
 
-import { useQuery } from '@connectrpc/connect-query'
-import { listPlans } from '@rpc/plan/v1/plan-PlanService_connectquery'
+import { useQuery } from '@tanstack/react-query'
+import { graphqlRequest, GET_PLANS } from '@/lib/graphql/client'
+import type { GetPlansQuery } from '@/graphql/generated/types'
+import { queryKeys } from '@/lib/query-keys'
 
 /**
- * Hook to fetch plans using connect-query.
- *
- * Uses the generated connect-query descriptor for:
- * - Automatic query key generation (aligned with SSR)
- * - Type-safe request/response handling
- * - Transport integration via ConnectProvider
- *
- * The query key is automatically derived from the service/method names,
- * ensuring SSR prefetch and client hydration stay in sync.
+ * Hook to fetch plans using GraphQL (Mesh gateway) with TanStack Query.
  */
 export function usePlansQuery() {
-  return useQuery(listPlans, {})
+  return useQuery({
+    queryKey: queryKeys.plans.list(),
+    queryFn: async () => {
+      const data = await graphqlRequest<GetPlansQuery>(GET_PLANS)
+      return data.plans
+    },
+  })
 }

@@ -1,21 +1,28 @@
-# ApplyMate Architecture (Phase 3 Snapshot)
+# ApplyMate Architecture (Phase 3b Snapshot – Mesh Gateway)
 
 ## Services
 
-- **Web (`apps/web`)** – Next.js App Router UI acting as BFF for browser traffic.
-- **GraphQL MS (`apps/graphql-ms`)** – Nest.js service exposing:
-  - GraphQL (`/graphql`) with code-first schema generation (`schema.gql` synced to `packages/shared/graphql/`).
-  - tRPC (`/trpc`) for type-safe internal calls from Next.js routes.
-  - gRPC (`user.UserService` on `GRAPHQL_MS_GRPC_URL`) for cross-language consumers.
-- **Auth / Upload MS** – placeholders; will integrate once user-facing primitives are stable.
+- **Web (`apps/web`)** – Next.js App Router UI. No longer a BFF; it consumes the public GraphQL Mesh gateway.
+- **Mesh Gateway (`apps/mesh-gateway`)** – Public GraphQL endpoint (WS/SSE capable). Sources:
+  - GraphQL services: `user` (`apps/user-graphql-ms`), `plan` (`apps/plan-graphql-ms`).
+  - Connect/gRPC service: `upload` (via proto descriptors).
+  - Bridges backend streams to GraphQL subscriptions.
+- **User GraphQL MS (`apps/user-graphql-ms`)** – Nest.js service exposing:
+  - GraphQL (`/graphql`) with code-first schema generation (`schema.gql` synced to `packages/shared/graphql/user-schema.gql`).
+  - tRPC (`/trpc`) for internal calls if needed.
+- **Plan GraphQL MS (`apps/plan-graphql-ms`)** – Nest.js service exposing:
+  - GraphQL (`/graphql`) with code-first schema generation (`schema.gql` synced to `packages/shared/graphql/plan-schema.gql`).
+- **Upload MS (`apps/upload-ms`)** – Will speak Connect/gRPC using `packages/shared/proto/upload/v1/upload.proto`.
+- **Auth MS** – Placeholder; to be integrated later.
+- **GraphQL MS (legacy, `apps/graphql-ms`)** – Monolithic GraphQL service kept temporarily for reference; superseded by the split user/plan services.
 
 ## Shared Packages
 
-- `packages/shared/env` – Zod runtime validation for every environment plus helpers such as `loadGraphqlServiceEnv`.
+- `packages/shared/env` – Zod runtime validation for every environment plus helpers such as `loadUserGraphqlServiceEnv` and `loadPlanGraphqlServiceEnv`.
 - `packages/shared/schemas` – Source of truth for domain objects (`user`, `plan`, etc.).
 - `packages/shared/db` – Supabase client factories (public + admin) with type-safe helpers.
-- `packages/shared/proto` – Protobuf contracts used by Nest + future Connect RPC handlers.
-- `packages/shared/connect/gen` – Buf-generated TypeScript clients (`*_pb.ts`, `*_connect.ts`, `*_connectquery.ts`).
+- `packages/shared/proto` – Protobuf contracts (user, upload) used by Nest + Connect handlers.
+- `packages/shared/connect/gen` – Buf-generated Connect clients (currently only `upload`), used by Mesh for upload streaming.
 - `packages/shared/graphql` – Generated GraphQL schema for codegen consumers.
 
 ## Core Entity Contracts
@@ -54,52 +61,56 @@ All protocols (GraphQL/tRPC/gRPC/Connect) hydrate from the shared Zod schemas, e
 
 ## Environment Variables
 
-| Key                             | Purpose                                    |
-| ------------------------------- | ------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                       |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public client key                          |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server-side key for CRUD                   |
-| `NEXT_PUBLIC_APP_URL`           | Allowed origin for GraphQL MS CORS         |
-| `GRAPHQL_MS_PORT`               | HTTP port (default `4000`)                 |
-| `GRAPHQL_MS_GRPC_URL`           | gRPC bind target (default `0.0.0.0:50051`) |
+| Key                             | Purpose                                  |
+| ------------------------------- | ---------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public client key                        |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server-side key for CRUD                 |
+| `NEXT_PUBLIC_APP_URL`           | Allowed origin for GraphQL services CORS |
+| `USER_GRAPHQL_MS_PORT`          | User service HTTP port (default `4101`)  |
+| `PLAN_GRAPHQL_MS_PORT`          | Plan service HTTP port (default `4102`)  |
+| `MESH_PORT`                     | Mesh gateway port (default `4103`)       |
+| `MESH_PUBLIC_GRAPHQL_URL`       | Public Mesh GraphQL endpoint             |
+| `MESH_UPLOAD_ADDRESS`           | Upload gRPC/Connect address for Mesh     |
+| `MESH_UPLOAD_PROTO_PATH`        | Path to upload proto for Mesh handler    |
 
 Populate these keys via the root `env.example` → `.env` workflow so every service (Next.js, GraphQL MS, future workers) reads from the same canonical source.
 
-## Phase 3: Connect RPC + TanStack Query
+## Phase 3b: Mesh Gateway (current)
 
-Phase 3 introduced a Cosmo-style BFF (Backend-for-Frontend) stack for `apps/web`.
+- Public GraphQL endpoint provided by Mesh; web app consumes it directly with TanStack Query + GraphQL client (browser hits `/api/mesh/graphql` via Next.js proxy to avoid CORS).
+- Mesh bridges:
+  - GraphQL sources: user, plan.
+  - Connect/gRPC source: upload (proto-driven).
+- Subscriptions: Mesh adapts service streams (e.g., upload progress) to GraphQL WS/SSE subscriptions.
+- Auth/CORS: terminated at Mesh; downstream services can rely on internal credentials or forwarded tokens.
+- Downstream protocol mix: HTTP/GraphQL for user/plan; Connect/gRPC for upload.
 
-### New Components
+### Mapping Mesh sources to future federation subgraphs
 
-- **Connect RPC Gateway** (`apps/web/app/api/connect/[...connect]/route.ts`) – Uses `connectNodeAdapter` with a per-request `createContext` hook to expose Connect services via `/api/connect`.
-- **Server Connect services** (`apps/web/server/connect/**`) – Call the GraphQL MS (never Supabase directly), forward auth headers, and convert results to protobuf messages.
-- **TanStack Query + connect-query** – `QueryProvider` composes `QueryClientProvider` and `TransportProvider`, while hooks (e.g., `usePlansQuery`) rely on generated `listPlans` descriptors for automatic query keys.
-- **Caching helpers** – `lib/connect/cached-server.ts` wraps Connect calls with `unstable_cache`, and `lib/connect/revalidate.ts` exposes server actions for cache invalidation.
-- **Connect codegen scripts** – `pnpm connect:codegen` (root) and `pnpm --filter @apply-mate/shared proto:generate` keep generated clients in sync.
+- `UserService` → future `user` subgraph (native GraphQL).
+- `PlanService` → future `plan` subgraph (native GraphQL).
+- `UploadService` → future adapter subgraph (Mesh/Yoga wrapper) exposing GraphQL types + subscriptions over the Connect stream.
+- Keep Mesh SDL modular so a federated router can compose these subgraphs with minimal reshaping; align types/boundaries with planned subgraph ownership.
 
-### Data Flow (Phase 3)
+### Scripts (Mesh + codegen)
 
-```
-Browser (usePlansQuery via connect-query)
-   └─▶ /api/connect/.../ListPlans (ConnectRouter + createContext)
-         └─▶ apps/web/server/connect/plan-service.ts
-               └─▶ GraphQL MS (PlanResolver → PlanService → Supabase)
-                     └─▶ Supabase plans table (RLS-enabled)
+| Command                                           | Purpose                                                |
+| ------------------------------------------------- | ------------------------------------------------------ |
+| `pnpm dev:mesh`                                   | Run Mesh gateway locally (port 4103)                   |
+| `pnpm mesh:build`                                 | Build Mesh gateway config/artifacts                    |
+| `pnpm graphql:codegen:web`                        | Build Mesh schema then generate frontend GraphQL types |
+| `pnpm connect:codegen`                            | Generate Connect RPC types from proto                  |
+| `pnpm --filter @apply-mate/shared proto:generate` | Same, scoped to shared pkg                             |
 
-SSR Prefetch:
-app/page.tsx → QueryClient.prefetchQuery(connectQueryKeys.plans.list)
-   └─▶ getPlansResponseCached() → listPlans() → cached ListPlansResponse
-   └─▶ HydrationBoundary + React Query cache state
-```
+## Phase 4: Federation Readiness (future)
 
-### Scripts
+- Plan to replace Mesh gateway with a federated router (Hive/Apollo/Cosmo) when team boundaries/subgraphs stabilize.
+- Non-GraphQL services will be wrapped as subgraphs (potentially using Mesh/Yoga) and composed in the router with schema checks/contracts.
 
-| Command                           | Purpose                               |
-| --------------------------------- | ------------------------------------- |
-| `pnpm connect:codegen`            | Generate Connect RPC types from proto |
-| `pnpm --filter web proto:codegen` | Same, scoped to web                   |
+---
 
-See [`docs/web/bff.md`](./web/bff.md) for detailed implementation guide.
+Future phases will extend this document with additional entities, federation, and observability notes.
 
 ---
 

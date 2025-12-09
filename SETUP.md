@@ -9,7 +9,7 @@
 
 2. **Initialize Monorepo Skeleton**
 
-- Create directories: `apps/web`, `apps/graphql-ms`, `apps/auth-ms`, `apps/upload-ms`, `apps/wundergraph`, `packages/shared`, `packages/config`.
+- Create directories: `apps/web`, `apps/mesh-gateway`, `apps/user-graphql-ms`, `apps/plan-graphql-ms`, `apps/auth-ms`, `apps/upload-ms`, `packages/shared`, `packages/config`.
 - Wire root `package.json` scripts (`pnpm dev:web`, etc.) and workspace dependencies; ensure path aliases resolve via `tsconfig.base.json`.
 
 3. **Baseline App Scaffolds**
@@ -29,21 +29,30 @@
 
 ## Phase 2 · GraphQL Microservice Baseline
 
-- Scaffold `apps/graphql-ms` Nest app with GraphQL module, Supabase client, and Zod-based DTO validation.
-- Implement initial CRUD resolvers for a core entity (e.g., Projects) and confirm Supabase RLS alignment.
-- Add integration tests hitting the GraphQL endpoint plus lint/test CI job for this service.
+- Scaffold GraphQL Nest apps (`apps/user-graphql-ms`, `apps/plan-graphql-ms`) with GraphQL modules, Supabase client, and Zod-based DTO validation.
+- Implement initial CRUD resolvers for core entities and confirm Supabase RLS alignment.
+- Add integration tests hitting the GraphQL endpoints plus lint/test CI jobs for these services.
 
-## Phase 3 · Next.js BFF & GraphQL Client Integration
+## Phase 3 · Next.js BFF & GraphQL Client Integration (IMPLEMENTED · CANCELLED/TO BE REPLACED)
 
-- Update `apps/web` to use Apollo (or WunderGraph client) in server components/BFF routes, consuming the GraphQL MS.
-- Add SSR data fetching patterns, caching policy, and shared TypeScript types generated from the GraphQL schema (`packages/shared/graphql-types`).
-- Document how Next proxies auth headers/session context to backend calls.
+- Was: Next.js BFF using Apollo/WunderGraph client against GraphQL MS, SSR patterns, shared types, auth proxying.
+- Status: superseded by Mesh gateway plan below; kept for historical reference (no WunderGraph in current flow).
 
-## Phase 4 · Federation via WunderGraph
+## Phase 3b · Public GraphQL via Mesh Gateway (current plan)
 
-- Introduce WunderGraph gateway (inside `apps/wundergraph`) federating the GraphQL MS plus placeholder schemas for auth/upload.
-- Configure schema stitching, persisted queries, and CI checks for schema composition.
-- Update Next.js client to hit the WunderGraph endpoint and regenerate types.
+- Expose a single public GraphQL endpoint using GraphQL Mesh.
+- Mesh sources: `user` and `plan` GraphQL services (`apps/user-graphql-ms`, `apps/plan-graphql-ms`); `upload` Connect/gRPC service via proto descriptors.
+- Implement subscription handlers bridging backend streams (upload progress, project/dashboard events) to GraphQL subscriptions (WS/SSE).
+- Point `apps/web` GraphQL client + TanStack Query to the Mesh endpoint; keep operation documents aligned with a future federation-friendly schema.
+- Remove legacy WunderGraph/BFF remnants; rely on Mesh + Next.js proxy for CORS-free browser calls.
+- Frontend GraphQL codegen: `pnpm graphql:codegen:web` (builds Mesh schema, then generates types from `apps/web/graphql/*.graphql`).
+- Proto/Connect codegen: `pnpm connect:codegen` (root) or `pnpm --filter @apply-mate/shared proto:generate`.
+
+## Phase 4 · Federation Readiness (future)
+
+- Keep Mesh schema modular to map cleanly to future subgraph boundaries.
+- Plan migration to a federated router (Hive/Apollo/Cosmo) with Mesh- or Yoga-built subgraphs for non-GraphQL services.
+- Add composition/checks in CI when the router is introduced; keep contracts/breaking-change checks on the roadmap.
 
 ## Phase 5 · Additional Microservices & Protocols
 

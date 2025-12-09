@@ -1,0 +1,125 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+"""
+Directs the executor to stream plural fields when the `if` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String, kind: String, location: String, options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  currentUser: User
+  health: String!
+  plans: [PlanModel!]!
+  user(id: ID!): User!
+  users(limit: Int): [User!]!
+  upload_v1_UploadService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService")
+}
+
+type Mutation {
+  createUser(input: CreateUserRequest!): User!
+  deleteUser(id: ID!): Boolean!
+  updateUser(input: UpdateUserRequest!): User!
+  upload_v1_UploadService_StartUpload(input: File): upload__v1__UploadResult @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "StartUpload", responseStream: false)
+  upload_v1_UploadService_WatchUpload(input: upload__v1__UploadStatusRequest_Input): [upload__v1__UploadStatus] @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "WatchUpload", responseStream: true)
+}
+
+input CreateUserRequest {
+  avatarUrl: String
+  email: String!
+  fullName: String!
+  jobTitle: String
+  metadata: JSONObject
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""Represents a simple JSON object (no arrays)."""
+scalar JSONObject
+
+type PlanModel {
+  code: String!
+  createdAt: DateTime!
+  id: String!
+  price: Float!
+  updatedAt: DateTime!
+}
+
+input UpdateUserRequest {
+  avatarUrl: String
+  email: String
+  fullName: String
+  id: ID!
+  jobTitle: String
+  metadata: JSONObject
+}
+
+type User {
+  avatarUrl: String
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  id: ID!
+  jobTitle: String
+  metadata: JSONObject
+  updatedAt: DateTime!
+}
+
+type Subscription {
+  upload_v1_UploadService_WatchUpload(input: upload__v1__UploadStatusRequest_Input): upload__v1__UploadStatus @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "WatchUpload", responseStream: true)
+  uploadStatus(uploadId: ID!): UploadStatus!
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type upload__v1__UploadResult {
+  upload_id: String
+  status: String
+  message: String
+}
+
+scalar File
+
+type upload__v1__UploadStatus {
+  upload_id: String
+  status: String
+  progress: Int
+  message: String
+}
+
+input upload__v1__UploadStatusRequest_Input {
+  upload_id: String
+}
+
+scalar TransportOptions
+
+type UploadStatus {
+  uploadId: ID!
+  status: String!
+  progress: Int
+  message: String
+}

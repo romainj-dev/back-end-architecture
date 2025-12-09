@@ -1,9 +1,6 @@
-# Phase 3 Follow-Up Items
+# Phase 3 Follow-Up Items (Legacy / superseded by Mesh gateway)
 
-The review of Phase 3 uncovered a few gaps compared to `plan.md` and the
-Cosmo Studio reference implementation. Each numbered item below describes
-the delta, desired end state, and suggested implementation notes so they
-can be addressed individually.
+Phase 3 (Connect BFF) has been superseded by the Mesh public GraphQL gateway. These notes are kept for reference only. Most items below are obviated by removing the Connect BFF path; address them only if you keep legacy routes alive during the transition.
 
 1. **SSR caching parity**
    - _Current_: `apps/web/app/page.tsx` prefetches TanStack Query data but

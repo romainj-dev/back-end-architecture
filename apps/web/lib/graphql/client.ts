@@ -1,5 +1,5 @@
 /**
- * GraphQL client for calling the GraphQL MS from server-side code.
+ * GraphQL client for calling the Mesh gateway from server-side code.
  * Uses @shared/env for configuration instead of process.env directly.
  */
 
@@ -7,15 +7,21 @@ import { env } from '@/lib/env'
 import { FORWARDED_HEADERS } from '@/lib/connect/forwarded-headers'
 
 /**
- * Build the GraphQL MS URL from environment configuration.
- * Supports both explicit HTTP URL and port-based configuration.
+ * Build the Mesh GraphQL URL from environment configuration.
+ * Supports explicit URL override via env.
  */
-function getGraphqlMsUrl(): string {
-  // Allow explicit HTTP URL override via process.env for flexibility
-  if (process.env.GRAPHQL_MS_HTTP_URL) {
-    return process.env.GRAPHQL_MS_HTTP_URL
+function getMeshGraphqlUrl(): string {
+  const proxyPath =
+    process.env.NEXT_PUBLIC_MESH_PROXY_PATH ?? '/api/mesh/graphql'
+  const meshUrl =
+    process.env.MESH_PUBLIC_GRAPHQL_URL ?? env.MESH_PUBLIC_GRAPHQL_URL
+
+  if (typeof window !== 'undefined') {
+    // In the browser, use same-origin proxy to avoid CORS.
+    return proxyPath
   }
-  return `http://localhost:${env.GRAPHQL_MS_PORT}/graphql`
+
+  return meshUrl ?? proxyPath
 }
 
 interface GraphQLResponse<T> {
@@ -52,7 +58,7 @@ export async function graphqlRequest<T>(
   variables?: Record<string, unknown>,
   context?: RequestContext
 ): Promise<T> {
-  const url = getGraphqlMsUrl()
+  const url = getMeshGraphqlUrl()
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -65,7 +71,7 @@ export async function graphqlRequest<T>(
 
   if (!response.ok) {
     throw new Error(
-      `GraphQL MS error: ${response.status} ${response.statusText}`
+      `GraphQL gateway error: ${response.status} ${response.statusText}`
     )
   }
 
@@ -76,7 +82,7 @@ export async function graphqlRequest<T>(
   }
 
   if (!json.data) {
-    throw new Error('No data returned from GraphQL MS')
+    throw new Error('No data returned from GraphQL gateway')
   }
 
   return json.data

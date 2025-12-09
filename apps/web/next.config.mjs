@@ -19,6 +19,16 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/mesh/:path*',
+        destination:
+          process.env.MESH_PUBLIC_GRAPHQL_URL?.replace(/\/graphql$/, '') ??
+          'http://localhost:4103/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
       {

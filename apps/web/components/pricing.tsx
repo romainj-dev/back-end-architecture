@@ -3,7 +3,13 @@
 import { Button } from '@/components/ui/button'
 import { usePlansQuery } from '@queries/use-plans-query'
 import { Check, RefreshCw } from 'lucide-react'
-import type { Plan } from '@rpc/plan/v1/plan_pb'
+interface Plan {
+  id: string
+  code: string
+  price: number
+  createdAt: string
+  updatedAt: string
+}
 
 interface PlanCard {
   id: string
@@ -51,9 +57,7 @@ const PLAN_METADATA = {
 
 export function Pricing() {
   const { data, isLoading, isError, refetch } = usePlansQuery()
-
-  // connect-query returns the full response object, extract plans array
-  const plans = data?.plans ?? []
+  const plans = data ?? []
 
   const planCards = plans
     .map((plan: Plan): PlanCard | null => {
