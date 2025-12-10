@@ -1,4 +1,4 @@
-import { loadEnv, loadPublicEnv } from '@shared/env'
+import { loadEnv, loadPublicEnv } from '../env/index'
 
 export interface SupabaseConfig {
   url: string

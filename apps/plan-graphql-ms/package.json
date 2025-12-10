@@ -5,7 +5,7 @@
   "description": "Plan GraphQL microservice for ApplyMate",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts",
+    "dev": "tsx watch src/main.ts",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
     "start": "node -r tsconfig-paths/register dist/main.js",
     "start:debug": "node --inspect=0.0.0.0:9229 -r tsconfig-paths/register dist/main.js",

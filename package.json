@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Monorepo for the ApplyMate platform (Next.js web + Nest.js services)",
+  "type": "module",
   "packageManager": "pnpm@9.12.2",
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -33,6 +34,7 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.2.5",
     "turbo": "^2.1.3",
+    "tsx": "^4.19.1",
     "typescript-eslint": "^8.47.0"
   }
 }

@@ -1,14 +1,21 @@
 // @ts-nocheck
 import { GraphQLResolveInfo, SelectionSetNode, FieldNode, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { findAndParseConfig } from '@graphql-mesh/cli';
+import type { GetMeshOptions } from '@graphql-mesh/runtime';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { defaultImportFn, handleImport } from '@graphql-mesh/utils';
+import { PubSub } from '@graphql-mesh/utils';
+import { DefaultLogger } from '@graphql-mesh/utils';
+import type { MeshResolvedSource } from '@graphql-mesh/runtime';
+import type { MeshTransform, MeshPlugin } from '@graphql-mesh/types';
+import { parse } from 'graphql';
 import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';
 import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as BaseMeshContext, type MeshInstance } from '@graphql-mesh/runtime';
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
-import type { PlanServiceTypes } from './sources/PlanService/types';
 import type { UserServiceTypes } from './sources/UserService/types';
 import type { UploadServiceTypes } from './sources/UploadService/types';
+import type { PlanServiceTypes } from './sources/PlanService/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -449,11 +456,24 @@ export type DirectiveResolvers<ContextType = MeshContext> = ResolversObject<{
 export type MeshContext = UserServiceTypes.Context & PlanServiceTypes.Context & UploadServiceTypes.Context & BaseMeshContext;
 
 
-const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '..');
+import { fileURLToPath } from '@graphql-mesh/utils';
+const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '..');
 
 const importFn: ImportFn = <T>(moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {
+    case ".meshrc.ts":
+      return import("./../.meshrc.js") as T;
+    
+    case ".mesh/sources/UploadService/schemaWithAnnotations":
+      return import("./sources/UploadService/schemaWithAnnotations") as T;
+    
+    case ".mesh/sources/PlanService/introspectionSchema":
+      return import("./sources/PlanService/introspectionSchema") as T;
+    
+    case ".mesh/sources/UserService/introspectionSchema":
+      return import("./sources/UserService/introspectionSchema") as T;
+    
     default:
       return Promise.reject(new Error(`Cannot find module '${relativeModuleId}'.`));
   }
@@ -468,15 +488,104 @@ const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
   validate: false
 });
 
-export function getMeshOptions() {
-  console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
-  return findAndParseConfig({
-    dir: baseDir,
-    artifactsDir: ".mesh",
-    configName: "mesh",
-    additionalPackagePrefixes: [],
-    initialLoggerPrefix: "",
-  });
+export const rawServeConfig: YamlConfig.Config['serve'] = undefined as any
+export async function getMeshOptions(): Promise<GetMeshOptions> {
+const pubsub = new PubSub();
+const sourcesStore = rootStore.child('sources');
+const logger = new DefaultLogger("");
+const MeshCache = await import("@graphql-mesh/cache-localforage").then(handleImport);
+  const cache = new MeshCache({
+      ...{},
+      importFn,
+      store: rootStore.child('cache'),
+      pubsub,
+      logger,
+    })
+const fetchFn = await import('@whatwg-node/fetch').then(m => m?.fetch || m);
+const sources: MeshResolvedSource[] = [];
+const transforms: MeshTransform[] = [];
+const additionalEnvelopPlugins: MeshPlugin<any>[] = [];
+const userServiceTransforms = [];
+const planServiceTransforms = [];
+const uploadServiceTransforms = [];
+const UserServiceHandler = await import("@graphql-mesh/graphql").then(handleImport);
+const userServiceHandler = new UserServiceHandler({
+              name: "UserService",
+              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/graphql/user-schema.graphql","endpoint":"http://localhost:4101/graphql"},
+              baseDir,
+              cache,
+              pubsub,
+              store: sourcesStore.child("UserService"),
+              logger: logger.child({ source: "UserService" }),
+              importFn,
+            });
+const PlanServiceHandler = await import("@graphql-mesh/graphql").then(handleImport);
+const planServiceHandler = new PlanServiceHandler({
+              name: "PlanService",
+              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/graphql/plan-schema.graphql","endpoint":"http://localhost:4102/graphql"},
+              baseDir,
+              cache,
+              pubsub,
+              store: sourcesStore.child("PlanService"),
+              logger: logger.child({ source: "PlanService" }),
+              importFn,
+            });
+const UploadServiceHandler = await import("@graphql-mesh/grpc").then(handleImport);
+const uploadServiceHandler = new UploadServiceHandler({
+              name: "UploadService",
+              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/proto/upload/v1/upload.proto","endpoint":"http://localhost:50052","useHTTPS":false},
+              baseDir,
+              cache,
+              pubsub,
+              store: sourcesStore.child("UploadService"),
+              logger: logger.child({ source: "UploadService" }),
+              importFn,
+            });
+sources[0] = {
+          name: 'UserService',
+          handler: userServiceHandler,
+          transforms: userServiceTransforms
+        }
+sources[1] = {
+          name: 'PlanService',
+          handler: planServiceHandler,
+          transforms: planServiceTransforms
+        }
+sources[2] = {
+          name: 'UploadService',
+          handler: uploadServiceHandler,
+          transforms: uploadServiceTransforms
+        }
+const additionalTypeDefs = [parse("type UploadStatus {\n  uploadId: ID!\n  status: String!\n  progress: Int\n  message: String\n}\n\ntype Subscription {\n  uploadStatus(uploadId: ID!): UploadStatus!\n}"),] as any[];
+const additionalResolvers = await Promise.all([
+        import("../Users/romainjulien/development/apply-mate/apps/mesh-gateway/mesh.resolvers.ts")
+            .then(m => m.resolvers || m.default || m)
+      ]);
+const Merger = await import("@graphql-mesh/merger-stitching").then(handleImport);
+const merger = new Merger({
+        cache,
+        pubsub,
+        logger: logger.child({ merger: "stitching" }),
+        store: rootStore.child("stitching")
+      })
+
+  return {
+    sources,
+    transforms,
+    additionalTypeDefs,
+    additionalResolvers,
+    cache,
+    pubsub,
+    merger,
+    logger,
+    additionalEnvelopPlugins,
+    get documents() {
+      return [
+      
+    ];
+    },
+    fetchFn,
+  };
 }
 
 export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
@@ -486,6 +595,7 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
     rawServeConfig: undefined,
   })
 }
+
 
 let meshInstance$: Promise<MeshInstance> | undefined;
 

@@ -1,24 +1,28 @@
 import type { Config } from 'jest'
 
 const config: Config = {
-  rootDir: '.',
   testEnvironment: 'node',
-  clearMocks: true,
-  coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
+  rootDir: '../..',
+  roots: ['<rootDir>/apps/plan-graphql-ms'],
   testMatch: ['**/*.spec.ts'],
+  clearMocks: true,
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/apps/plan-graphql-ms/src/$1',
+    '^@shared/(.*)$': '<rootDir>/packages/shared/$1',
+  },
   transform: {
-    '^.+\\.(t|j)s$': [
+    '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: 'tsconfig.json',
+        tsconfig: {
+          module: 'CommonJS',
+          moduleResolution: 'Node',
+          esModuleInterop: true,
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
+        },
       },
     ],
-  },
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@shared/(.*)$': '<rootDir>/../../packages/shared/$1',
-    '^@config/(.*)$': '<rootDir>/../../packages/config/$1',
   },
 }
 
