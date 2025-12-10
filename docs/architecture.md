@@ -61,18 +61,17 @@ All protocols (GraphQL/tRPC/gRPC/Connect) hydrate from the shared Zod schemas, e
 
 ## Environment Variables
 
-| Key                             | Purpose                                  |
-| ------------------------------- | ---------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                     |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public client key                        |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server-side key for CRUD                 |
-| `NEXT_PUBLIC_APP_URL`           | Allowed origin for GraphQL services CORS |
-| `USER_GRAPHQL_MS_PORT`          | User service HTTP port (default `4101`)  |
-| `PLAN_GRAPHQL_MS_PORT`          | Plan service HTTP port (default `4102`)  |
-| `MESH_PORT`                     | Mesh gateway port (default `4103`)       |
-| `MESH_PUBLIC_GRAPHQL_URL`       | Public Mesh GraphQL endpoint             |
-| `MESH_UPLOAD_ADDRESS`           | Upload gRPC/Connect address for Mesh     |
-| `MESH_UPLOAD_PROTO_PATH`        | Path to upload proto for Mesh handler    |
+| Key                         | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| `SUPABASE_URL`              | Supabase project URL (server-side only)  |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side key for CRUD                 |
+| `NEXT_PUBLIC_APP_URL`       | Allowed origin for GraphQL services CORS |
+| `USER_GRAPHQL_MS_PORT`      | User service HTTP port (default `4101`)  |
+| `PLAN_GRAPHQL_MS_PORT`      | Plan service HTTP port (default `4102`)  |
+| `MESH_PORT`                 | Mesh gateway port (default `4103`)       |
+| `MESH_PUBLIC_GRAPHQL_URL`   | Public Mesh GraphQL endpoint             |
+| `MESH_UPLOAD_ADDRESS`       | Upload gRPC/Connect address for Mesh     |
+| `MESH_UPLOAD_PROTO_PATH`    | Path to upload proto for Mesh handler    |
 
 Populate these keys via the root `env.example` → `.env` workflow so every service (Next.js, GraphQL MS, future workers) reads from the same canonical source.
 

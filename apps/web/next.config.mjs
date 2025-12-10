@@ -1,14 +1,10 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { NextConfig } from 'next'
-import { loadRootEnv } from '../../packages/shared/env/load-root-env'
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(__dirname, '..', '..')
 
-loadRootEnv({ root: repoRoot })
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   turbopack: {
     root: repoRoot,
