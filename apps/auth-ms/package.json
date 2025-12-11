@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Authentication microservice placeholder for ApplyMate",
+  "type": "module",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node -r tsconfig-paths/register dist/main.js",
+    "build": "pnpm run type-check && pnpm run build:bundle",
+    "build:bundle": "tsx scripts/build.ts",
+    "dev": "node --import @swc-node/register/esm-register --watch src/main.ts",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
-    "test": "echo \"No tests yet\""
+    "start": "node dist/main.js",
+    "test": "echo \"No tests yet\"",
+    "type-check": "tsc --noEmit -p tsconfig.build.json"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.7",
@@ -21,7 +24,6 @@
   "devDependencies": {
     "@types/node": "^22.9.0",
     "ts-node-dev": "^2.0.0",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
   }
 }

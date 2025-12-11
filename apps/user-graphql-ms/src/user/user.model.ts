@@ -6,10 +6,10 @@ export class UserModel {
   @Field(() => ID)
   id!: string
 
-  @Field()
+  @Field(() => String)
   email!: string
 
-  @Field()
+  @Field(() => String)
   fullName!: string
 
   @Field(() => String, { nullable: true })

@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { loadEnv } from '../env/index'
+import { loadEnv } from '@shared/env'
 
 export interface SupabaseAdminConfig {
   url?: string

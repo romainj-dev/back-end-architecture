@@ -5,13 +5,16 @@ import { AppResolver } from './app.resolver'
 import { SupabaseModule } from './supabase/supabase.module'
 import { PlanModule } from './plan/plan.module'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { Request, Response } from 'express'
+
+const moduleDir = fileURLToPath(new URL('.', import.meta.url))
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: resolve(__dirname, '../schema.gql'),
+      autoSchemaFile: resolve(moduleDir, '../schema.gql'),
       sortSchema: true,
       playground: process.env.NODE_ENV !== 'production',
       context: ({ req, res }: { req: Request; res: Response }) => ({

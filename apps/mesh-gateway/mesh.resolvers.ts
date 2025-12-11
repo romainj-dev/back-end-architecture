@@ -3,7 +3,7 @@ import { createGrpcTransport } from '@connectrpc/connect-node'
 import {
   UploadService,
   type UploadStatus as RpcUploadStatus,
-} from '../../packages/shared/connect/gen/upload/v1/upload_connect'
+} from '@shared/connect/gen/upload/v1/upload_connect'
 
 interface UploadStatus {
   uploadId: string

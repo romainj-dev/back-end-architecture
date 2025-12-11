@@ -4,11 +4,12 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { Logger } from '@nestjs/common'
 import { loadPlanGraphqlServiceEnv } from '@shared/env'
+import { type NestExpressApplication } from '@nestjs/platform-express'
 
 async function bootstrap() {
   const logger = new Logger('Plan-GraphQL-MS')
   const env = loadPlanGraphqlServiceEnv()
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   app.enableCors({
     origin: [env.appUrl],

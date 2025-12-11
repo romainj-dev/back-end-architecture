@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { resolve, dirname } from 'node:path'
 import { config as loadEnv } from 'dotenv'
+import { fileURLToPath } from 'node:url'
 
 export interface LoadRootEnvOptions {
   root?: string
@@ -16,6 +17,38 @@ const DEFAULT_ENV_FILES = [
 ] as const
 
 const loadedSignatures = new Set<string>()
+
+/**
+ * Finds the repository root by looking for a directory containing .env or package.json
+ * Works from both source (src/) and bundled (dist/) locations.
+ */
+function findRepoRoot(startDir: string, maxDepth = 5): string {
+  let current = startDir
+  for (let i = 0; i < maxDepth; i++) {
+    if (
+      existsSync(resolve(current, '.env')) ||
+      existsSync(resolve(current, 'pnpm-workspace.yaml'))
+    ) {
+      return current
+    }
+    const parent = dirname(current)
+    if (parent === current) break
+    current = parent
+  }
+  return startDir
+}
+
+/**
+ * Initializes environment variables for a service.
+ * Auto-detects repo root from the caller's location.
+ *
+ * @param callerUrl - Pass `import.meta.url` from the calling file
+ */
+export function initServiceEnv(callerUrl: string): void {
+  const callerDir = dirname(fileURLToPath(callerUrl))
+  const repoRoot = findRepoRoot(callerDir)
+  loadRootEnv({ root: repoRoot })
+}
 
 /**
  * Loads environment variables from the repository root using the

@@ -3,10 +3,10 @@ import { JsonObjectScalar } from '../../common/scalars/json-object.scalar'
 
 @InputType()
 export class CreateUserRequest {
-  @Field()
+  @Field(() => String)
   email!: string
 
-  @Field()
+  @Field(() => String)
   fullName!: string
 
   @Field(() => String, { nullable: true })
