@@ -1,9 +1,20 @@
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { config as loadEnv } from 'dotenv'
+import { envFilePaths } from '@shared/env/env-files'
+import { envSchema } from '@shared/env/env-schema'
+
+const currentDir = fileURLToPath(new URL('.', import.meta.url))
+const repoRoot = resolve(currentDir, '..', '..')
+
+for (const file of envFilePaths(repoRoot)) {
+  loadEnv({ path: file, override: true })
+}
+
+const env = envSchema.parse(process.env)
 
 const userSchemaAbs = resolve(
-  __dirname,
-  '..',
-  '..',
+  repoRoot,
   'packages',
   'shared',
   'graphql',
@@ -11,37 +22,25 @@ const userSchemaAbs = resolve(
 )
 
 const planSchemaAbs = resolve(
-  __dirname,
-  '..',
-  '..',
+  repoRoot,
   'packages',
   'shared',
   'graphql',
   'plan-schema.graphql'
 )
 
-const userGraphqlEndpoint =
-  process.env.USER_GRAPHQL_MS_URL ?? 'http://localhost:4101/graphql'
-
-const planGraphqlEndpoint =
-  process.env.PLAN_GRAPHQL_MS_URL ?? 'http://localhost:4102/graphql'
-
-const uploadProtoPath =
-  process.env.MESH_UPLOAD_PROTO_PATH ??
-  resolve(
-    __dirname,
-    '..',
-    '..',
-    'packages',
-    'shared',
-    'proto',
-    'upload',
-    'v1',
-    'upload.proto'
-  )
-
-const uploadEndpoint =
-  process.env.MESH_UPLOAD_ADDRESS ?? 'http://localhost:50052'
+const userGraphqlEndpoint = `http://localhost:${env.USER_GRAPHQL_MS_PORT}/graphql`
+const planGraphqlEndpoint = `http://localhost:${env.PLAN_GRAPHQL_MS_PORT}/graphql`
+const uploadProtoPath = resolve(
+  repoRoot,
+  'packages',
+  'shared',
+  'proto',
+  'upload',
+  'v1',
+  'upload.proto'
+)
+const uploadEndpoint = `localhost:${env.UPLOAD_MS_PORT}`
 
 export default {
   sources: [
@@ -88,5 +87,5 @@ export default {
       }
     `,
   ],
-  additionalResolvers: [resolve(__dirname, './mesh.resolvers.ts')],
+  additionalResolvers: [resolve(currentDir, './mesh.resolvers.ts')],
 }

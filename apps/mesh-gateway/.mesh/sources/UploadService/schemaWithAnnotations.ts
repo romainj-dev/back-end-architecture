@@ -79,7 +79,7 @@ const schemaAST = {
               },
               "value": {
                 "kind": "StringValue",
-                "value": "http://localhost:50052"
+                "value": "localhost:4200"
               }
             },
             {

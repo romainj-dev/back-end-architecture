@@ -1,7 +1,8 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { graphqlRequest, GET_PLANS } from '@/lib/graphql/client'
+import { graphqlRequest } from '@/lib/graphql/client'
+import { GET_PLANS } from '@/lib/graphql/queries'
 import type { GetPlansQuery } from '@/graphql/generated/types'
 import { queryKeys } from '@/lib/query-keys'
 

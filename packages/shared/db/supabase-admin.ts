@@ -1,22 +1,16 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { loadEnv } from '@shared/env'
 
 export interface SupabaseAdminConfig {
-  url?: string
-  serviceRoleKey?: string
+  url: string
+  serviceRoleKey: string
 }
 
 export type SupabaseAdminClient = SupabaseClient
 
 export function createSupabaseAdminClient(
-  config: SupabaseAdminConfig = {}
+  config: SupabaseAdminConfig
 ): SupabaseAdminClient {
-  const env = loadEnv({
-    SUPABASE_URL: config.url,
-    SUPABASE_SERVICE_ROLE_KEY: config.serviceRoleKey,
-  })
-
-  return createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  return createClient(config.url, config.serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 }

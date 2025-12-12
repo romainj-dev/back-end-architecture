@@ -4,19 +4,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=production graphql-mesh dev -c .meshrc.ts --port 4103 --cors true",
-    "serve": "graphql-mesh serve -c .meshrc.ts --port 4103 --cors true",
-    "build": "graphql-mesh build -c .meshrc.ts"
+    "dev": "tsx scripts/mesh-bootstrap.ts",
+    "serve": "node dist/scripts/mesh-bootstrap.js",
+    "build": "tsc --noEmit -p tsconfig.json && graphql-mesh build -c .meshrc.ts"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.100.21",
-    "@graphql-mesh/graphql": "0.104.19",
-    "@graphql-mesh/grpc": "0.108.20",
     "@bufbuild/protobuf": "^1.10.0",
     "@connectrpc/connect": "^1.7.0",
     "@connectrpc/connect-node": "^1.4.0",
+    "@graphql-mesh/cli": "0.100.21",
+    "@graphql-mesh/config": "^0.108.21",
+    "@graphql-mesh/graphql": "0.104.19",
+    "@graphql-mesh/grpc": "0.108.20",
+    "@graphql-mesh/http": "^0.106.19",
+    "@graphql-mesh/runtime": "^0.106.19",
+    "dotenv": "^16.4.5",
     "graphql": "^16.9.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0"
   }
 }

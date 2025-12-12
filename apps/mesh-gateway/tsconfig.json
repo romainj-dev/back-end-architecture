@@ -2,10 +2,15 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true
+    "rootDir": "../..",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../../packages/shared/*"],
+      "@config/*": ["../../packages/config/*"]
+    }
   },
-  "include": ["mesh.config.ts"]
+  "include": ["mesh.config.ts", ".meshrc.ts", "scripts/**/*.ts"]
 }

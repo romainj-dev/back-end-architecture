@@ -49,12 +49,17 @@ the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
 
 3. **Configure environment variables**
 
-   ```bash
-   cp .env.example .env.local
-   ```
+   Create `.env` or `.env.local` in the repository root with the required variables:
+   - `SUPABASE_URL` - Supabase project URL
+   - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+   - `NEXT_PUBLIC_APP_URL` - Frontend app URL (default: `http://localhost:3000`)
+   - `MESH_GATEWAY_PORT` - Mesh gateway port (default: `4103`)
+   - `USER_GRAPHQL_MS_PORT` - User GraphQL service port (default: `4101`)
+   - `PLAN_GRAPHQL_MS_PORT` - Plan GraphQL service port (default: `4102`)
+   - `AUTH_MS_PORT` - Auth service port (default: `4100`)
+   - `UPLOAD_MS_PORT` - Upload service gRPC port (default: `4200`)
 
-   Populate the Supabase keys (URL, anon key, service role key) plus any app
-   URL overrides.
+   All variables are validated at build/runtime using Zod schemas. See `docs/architecture.md` for details.
 
 4. **Run targets**
 

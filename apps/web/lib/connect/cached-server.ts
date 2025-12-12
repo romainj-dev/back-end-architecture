@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache'
-import { graphqlRequest, GET_PLANS } from '@/lib/graphql/client'
+import { graphqlRequest } from '@/lib/graphql/server-client'
+import { GET_PLANS } from '@/lib/graphql/queries'
 
 interface GraphQLPlan {
   id: string

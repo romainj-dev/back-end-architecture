@@ -1,10 +1,12 @@
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
+import { ConfigService } from '@nestjs/config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  const port = process.env.PORT ? Number(process.env.PORT) : 4100
+  const config = app.get(ConfigService)
+  const port = Number(config.getOrThrow('AUTH_MS_PORT'))
   await app.listen(port)
   // eslint-disable-next-line no-console
   console.log(`🔐 Auth service running on http://localhost:${port}`)

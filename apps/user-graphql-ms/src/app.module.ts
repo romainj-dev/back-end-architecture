@@ -1,17 +1,28 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo'
-import { AppResolver } from './app.resolver'
-import { UserModule } from './user/user.module'
-import { SupabaseModule } from './supabase/supabase.module'
+import { ConfigModule } from '@nestjs/config'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Request, Response } from 'express'
+import { envFilePaths } from '@shared/env/env-files'
+import { envSchema } from '@shared/env/env-schema'
+import { AppResolver } from './app.resolver'
+import { UserModule } from './user/user.module'
+import { SupabaseModule } from './supabase/supabase.module'
 
 const moduleDir = fileURLToPath(new URL('.', import.meta.url))
+const repoRoot = resolve(moduleDir, '../../..')
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: envFilePaths(repoRoot),
+      expandVariables: true,
+      validate: (raw: Record<string, unknown>) => envSchema.parse(raw),
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: resolve(moduleDir, '../schema.gql'),

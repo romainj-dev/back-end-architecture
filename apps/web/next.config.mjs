@@ -1,7 +1,13 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import pkg from '@next/env'
+const { loadEnvConfig } = pkg
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(__dirname, '..', '..')
+
+// Load .env files from repo root before config is evaluated
+loadEnvConfig(repoRoot)
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -19,9 +25,7 @@ const nextConfig = {
     return [
       {
         source: '/api/mesh/:path*',
-        destination:
-          process.env.MESH_PUBLIC_GRAPHQL_URL?.replace(/\/graphql$/, '') ??
-          'http://localhost:4103/:path*',
+        destination: `http://localhost:${process.env.MESH_GATEWAY_PORT}/:path*`,
       },
     ]
   },

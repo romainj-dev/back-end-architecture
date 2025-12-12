@@ -4,6 +4,10 @@ import {
   UploadService,
   type UploadStatus as RpcUploadStatus,
 } from '@shared/connect/gen/upload/v1/upload_connect'
+import { parseEnv } from '@shared/env/env-schema'
+
+// Validated by Zod in `.meshrc.ts` during build/start
+const env = parseEnv()
 
 interface UploadStatus {
   uploadId: string
@@ -11,8 +15,6 @@ interface UploadStatus {
   progress?: number
   message?: string
 }
-
-const uploadAddress = process.env.MESH_UPLOAD_ADDRESS ?? 'localhost:50052'
 
 export default {
   Subscription: {
@@ -22,7 +24,8 @@ export default {
         args: { uploadId: string }
       ) {
         const transport = createGrpcTransport({
-          baseUrl: `http://${uploadAddress}`,
+          baseUrl: `http://localhost:${env.UPLOAD_MS_PORT}`,
+          httpVersion: '2',
         })
         const client = createPromiseClient(UploadService, transport)
         const stream = client.watchUpload({ uploadId: args.uploadId })

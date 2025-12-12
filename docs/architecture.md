@@ -18,7 +18,7 @@
 
 ## Shared Packages
 
-- `packages/shared/env` – Zod runtime validation for every environment plus helpers such as `loadUserGraphqlServiceEnv` and `loadPlanGraphqlServiceEnv`.
+- `packages/shared/env` – Zod schema validation (`envSchema`, `publicEnvSchema`) and shared env file path utilities (`envFilePaths`). All services use this for consistent env loading and validation.
 - `packages/shared/schemas` – Source of truth for domain objects (`user`, `plan`, etc.).
 - `packages/shared/db` – Supabase client factories (public + admin) with type-safe helpers.
 - `packages/shared/proto` – Protobuf contracts (user, upload) used by Nest + Connect handlers.
@@ -61,19 +61,33 @@ All protocols (GraphQL/tRPC/gRPC/Connect) hydrate from the shared Zod schemas, e
 
 ## Environment Variables
 
-| Key                         | Purpose                                  |
-| --------------------------- | ---------------------------------------- |
-| `SUPABASE_URL`              | Supabase project URL (server-side only)  |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-side key for CRUD                 |
-| `NEXT_PUBLIC_APP_URL`       | Allowed origin for GraphQL services CORS |
-| `USER_GRAPHQL_MS_PORT`      | User service HTTP port (default `4101`)  |
-| `PLAN_GRAPHQL_MS_PORT`      | Plan service HTTP port (default `4102`)  |
-| `MESH_PORT`                 | Mesh gateway port (default `4103`)       |
-| `MESH_PUBLIC_GRAPHQL_URL`   | Public Mesh GraphQL endpoint             |
-| `MESH_UPLOAD_ADDRESS`       | Upload gRPC/Connect address for Mesh     |
-| `MESH_UPLOAD_PROTO_PATH`    | Path to upload proto for Mesh handler    |
+All environment variables are validated at build/runtime using Zod schemas in `packages/shared/env/env-schema.ts`. Services load env files from the repository root in this order:
 
-Populate these keys via the root `env.example` → `.env` workflow so every service (Next.js, GraphQL MS, future workers) reads from the same canonical source.
+1. `.env.${NODE_ENV}.local` (e.g., `.env.development.local`)
+2. `.env.${NODE_ENV}` (e.g., `.env.development`)
+3. `.env.local`
+4. `.env`
+
+### Required Variables
+
+| Key                         | Purpose                                   |
+| --------------------------- | ----------------------------------------- |
+| `SUPABASE_URL`              | Supabase project URL (server-side only)   |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side key for CRUD                  |
+| `NEXT_PUBLIC_APP_URL`       | Allowed origin for GraphQL services CORS  |
+| `MESH_GATEWAY_PORT`         | Mesh gateway HTTP port (default `4103`)   |
+| `USER_GRAPHQL_MS_PORT`      | User service HTTP port (default `4101`)   |
+| `PLAN_GRAPHQL_MS_PORT`      | Plan service HTTP port (default `4102`)   |
+| `AUTH_MS_PORT`              | Auth service HTTP port (default `4100`)   |
+| `UPLOAD_MS_PORT`            | Upload service gRPC port (default `4200`) |
+
+### Environment Loading
+
+- **Nest services**: Use `@nestjs/config` with `ConfigModule.forRoot()` configured to load root-level env files and validate via the shared Zod schema.
+- **Mesh gateway**: Loads and validates env in `.meshrc.ts` during build/start.
+- **Next.js web**: Uses `parsePublicEnv()` from `@shared/env` for public variables.
+
+All services share the same env file location (repo root) and validation schema, ensuring consistency across the monorepo.
 
 ## Phase 3b: Mesh Gateway (current)
 

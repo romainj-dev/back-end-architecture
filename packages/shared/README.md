@@ -9,20 +9,10 @@ This directory currently serves three different consumers:
 3. **Future CLIs/scripts** – will likely reuse the shared env + Supabase code
    without running a build first.
 
-## Current Setup (JS + DTS)
+## Current Setup (TS-only)
 
-We check in paired `.js` and `.d.ts` files next to the TypeScript sources (for
-example `env/load-root-env.{ts,js,d.ts}`) so Node can execute them immediately
-while the rest of the repo is still TypeScript-first.
-
-**Implications**
-
-- No extra build step is required to run `pnpm dev` anywhere in the monorepo.
-- Generated files live inside the repo, so lint/format hooks must ignore them
-  (`packages/config/eslint/base.mjs` excludes `packages/shared/**/*.d.ts`).
-- When a shared helper changes, we must keep the `.ts`, `.js`, and `.d.ts`
-  versions in sync. This is tedious but acceptable for the handful of files we
-  currently expose.
+Shared env helpers now ship as plain TypeScript sources; consumers load them via
+ts-node/tsx or normal transpilation without committed JS/DTS artifacts.
 
 ## Long-Term Direction
 
