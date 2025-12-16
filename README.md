@@ -56,7 +56,6 @@ the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
    - `MESH_GATEWAY_PORT` - Mesh gateway port (default: `4103`)
    - `USER_GRAPHQL_MS_PORT` - User GraphQL service port (default: `4101`)
    - `PLAN_GRAPHQL_MS_PORT` - Plan GraphQL service port (default: `4102`)
-   - `AUTH_MS_PORT` - Auth service port (default: `4100`)
    - `UPLOAD_MS_PORT` - Upload service gRPC port (default: `4200`)
 
    All variables are validated at build/runtime using Zod schemas. See `docs/architecture.md` for details.

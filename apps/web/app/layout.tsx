@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import { QueryProvider } from '@/components/providers/query-provider'
+import { SessionProvider } from '@/components/providers/session-provider'
 
 const geist = Geist({
   subsets: ['latin'],
@@ -42,7 +43,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.variable} font-sans antialiased`}>
-        <QueryProvider>{children}</QueryProvider>
+        <SessionProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </SessionProvider>
         <Analytics />
       </body>
     </html>

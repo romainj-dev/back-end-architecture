@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo'
 import { ConfigModule } from '@nestjs/config'
@@ -7,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import type { Request, Response } from 'express'
 import { envFilePaths } from '@shared/env/env-files'
 import { envSchema } from '@shared/env/env-schema'
+import { GatewayAuthGuard } from '@shared/auth'
 import { AppResolver } from './app.resolver'
 import { SupabaseModule } from './supabase/supabase.module'
 import { PlanModule } from './plan/plan.module'
@@ -36,6 +38,12 @@ const repoRoot = resolve(moduleDir, '../../..')
     SupabaseModule,
     PlanModule,
   ],
-  providers: [AppResolver],
+  providers: [
+    AppResolver,
+    {
+      provide: APP_GUARD,
+      useClass: GatewayAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

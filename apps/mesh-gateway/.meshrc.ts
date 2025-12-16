@@ -50,6 +50,11 @@ export default {
         graphql: {
           source: userSchemaAbs,
           endpoint: userGraphqlEndpoint,
+          operationHeaders: {
+            'x-user-id': '{context.userHeaders["x-user-id"]}',
+            'x-user-email': '{context.userHeaders["x-user-email"]}',
+            'x-user-name': '{context.userHeaders["x-user-name"]}',
+          },
         },
       },
     },
@@ -59,6 +64,11 @@ export default {
         graphql: {
           source: planSchemaAbs,
           endpoint: planGraphqlEndpoint,
+          operationHeaders: {
+            'x-user-id': '{context.userHeaders["x-user-id"]}',
+            'x-user-email': '{context.userHeaders["x-user-email"]}',
+            'x-user-name': '{context.userHeaders["x-user-name"]}',
+          },
         },
       },
     },

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -18,12 +19,14 @@ export function AuthForm() {
     provider: 'google' | 'linkedin' | 'github'
   ) => {
     setIsLoading(provider)
-    // TODO: Implement OAuth sign in with Supabase
-
-    // Simulate loading
-    setTimeout(() => {
+    try {
+      await signIn(provider, {
+        callbackUrl: '/',
+      })
+    } catch (error) {
+      console.error('Sign in error:', error)
       setIsLoading(null)
-    }, 2000)
+    }
   }
 
   return (

@@ -2,11 +2,14 @@ import { createServer } from 'node:http'
 import { config as loadEnv } from 'dotenv'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import { createMeshHTTPHandler } from '@graphql-mesh/http'
 import { findAndParseConfig } from '@graphql-mesh/cli'
 import { getMesh } from '@graphql-mesh/runtime'
 import { envFilePaths } from '@shared/env/env-files'
 import { envSchema } from '@shared/env/env-schema'
+import { validateJWT, createUserHeaders } from '../auth'
+
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 const repoRoot = resolve(currentDir, '../../..')
 const gatewayDir = resolve(currentDir, '..')
@@ -27,7 +30,18 @@ async function main(): Promise<void> {
 
   const port = Number(env.MESH_GATEWAY_PORT)
 
-  createServer((req, res) => handler(req, res)).listen(port, () => {
+  createServer(async (req: IncomingMessage, res: ServerResponse) => {
+    // Validate JWT and add user headers to context
+    const user = await validateJWT(req, env.AUTH_SECRET)
+    if (user) {
+      const userHeaders = createUserHeaders(user)
+      // Add user headers to the request so mesh can access them
+      Object.entries(userHeaders).forEach(([key, value]) => {
+        req.headers[key] = value
+      })
+    }
+    handler(req, res)
+  }).listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(`Mesh running on http://localhost:${port}/graphql`)
   })

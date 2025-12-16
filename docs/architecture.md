@@ -78,7 +78,6 @@ All environment variables are validated at build/runtime using Zod schemas in `p
 | `MESH_GATEWAY_PORT`         | Mesh gateway HTTP port (default `4103`)   |
 | `USER_GRAPHQL_MS_PORT`      | User service HTTP port (default `4101`)   |
 | `PLAN_GRAPHQL_MS_PORT`      | Plan service HTTP port (default `4102`)   |
-| `AUTH_MS_PORT`              | Auth service HTTP port (default `4100`)   |
 | `UPLOAD_MS_PORT`            | Upload service gRPC port (default `4200`) |
 
 ### Environment Loading
