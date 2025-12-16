@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
+import { HeaderAuth } from './header-auth'
 
 export function Header() {
   return (
@@ -35,23 +35,7 @@ export function Header() {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden md:inline-flex"
-              asChild
-            >
-              <Link href="/auth">Log in</Link>
-            </Button>
-            <Button
-              size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-              asChild
-            >
-              <Link href="/auth">Get Started</Link>
-            </Button>
-          </div>
+          <HeaderAuth />
         </div>
       </div>
     </header>

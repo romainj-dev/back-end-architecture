@@ -19,7 +19,11 @@ const nextConfig = {
     externalDir: true,
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      { hostname: 'lh3.googleusercontent.com' }, // Google
+      { hostname: 'avatars.githubusercontent.com' }, // GitHub
+      { hostname: 'media.licdn.com' }, // LinkedIn
+    ],
   },
   async rewrites() {
     return [

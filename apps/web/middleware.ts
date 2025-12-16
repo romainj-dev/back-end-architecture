@@ -1,9 +1,18 @@
 import { auth } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 
-export default auth((_req) => {
-  // Middleware runs on matched routes
-  // Auth.js automatically handles session validation
-  // No redirect logic needed - just let the session be available
+export default auth((req) => {
+  const { nextUrl } = req
+  const isAuthenticated = !!req.auth
+
+  // Redirect unauthenticated users from protected routes to login
+  if (!isAuthenticated) {
+    const loginUrl = new URL('/auth', nextUrl)
+    loginUrl.searchParams.set('callbackUrl', nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
 })
 
 export const config = {

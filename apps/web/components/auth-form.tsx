@@ -21,7 +21,7 @@ export function AuthForm() {
     setIsLoading(provider)
     try {
       await signIn(provider, {
-        callbackUrl: '/',
+        callbackUrl: '/dashboard',
       })
     } catch (error) {
       console.error('Sign in error:', error)
