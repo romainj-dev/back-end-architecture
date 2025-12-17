@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Link2, ArrowRight, Lock } from 'lucide-react'
 
 export function QuickApplicationInput({ disabled }: { disabled?: boolean }) {
@@ -23,8 +24,10 @@ export function QuickApplicationInput({ disabled }: { disabled?: boolean }) {
   }
 
   return (
-    <div
-      className={`glass rounded-2xl border border-white/20 p-2 shadow-lg transition-all ${disabled ? 'opacity-80' : 'hover:shadow-xl hover:bg-white/40'}`}
+    <GlassCard
+      interactive={!disabled}
+      size="sm"
+      className={`relative ${disabled ? 'opacity-80' : ''}`}
     >
       <form onSubmit={handleSubmit} className="flex gap-4 p-2">
         <div className="flex-1 relative">
@@ -57,6 +60,6 @@ export function QuickApplicationInput({ disabled }: { disabled?: boolean }) {
           </Button>
         )}
       </form>
-    </div>
+    </GlassCard>
   )
 }

@@ -5,6 +5,7 @@ import AdventureIllustration from './adventure-illustration'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -91,11 +92,9 @@ export function ApplicationsTable({ items }: { items: null | Application[] }) {
   const isEmpty = items === null
 
   return (
-    <div
-      className={cn(
-        'glass rounded-3xl border border-white/20 shadow-xl overflow-hidden',
-        isEmpty ? 'opacity-90' : ''
-      )}
+    <GlassCard
+      className={cn('overflow-hidden rounded-3xl', isEmpty ? 'opacity-90' : '')}
+      size="none"
     >
       <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div className="flex flex-col gap-1">
@@ -316,6 +315,6 @@ export function ApplicationsTable({ items }: { items: null | Application[] }) {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </GlassCard>
   )
 }

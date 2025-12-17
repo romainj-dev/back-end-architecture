@@ -1,11 +1,14 @@
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
+import { GlassCard } from '@/components/ui/glass-card'
 import { AlertCircle, ArrowRight } from 'lucide-react'
 
 export function ProfileSetupPrompt() {
   return (
-    <div className="glass rounded-2xl border border-orange-200/50 bg-orange-50/30 p-6 relative overflow-hidden">
+    <GlassCard variant="accent" className="relative overflow-hidden">
+      <div className="absolute right-0 top-0 -mt-8 -mr-8 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+
       <div className="flex flex-col sm:flex-row gap-5 relative z-10">
         <div className="flex-shrink-0">
           <div className="w-12 h-12 rounded-xl bg-orange-100/10 flex items-center justify-center shadow-sm">
@@ -35,6 +38,6 @@ export function ProfileSetupPrompt() {
           </Button>
         </div>
       </div>
-    </div>
+    </GlassCard>
   )
 }

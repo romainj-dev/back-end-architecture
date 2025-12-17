@@ -63,7 +63,7 @@ const mockApplications: Application[] = [
 
 export default function DashboardEmptyPage() {
   const profile = { status: 'ready' } as { status: 'ready' | 'incomplete' }
-  const hasProfileCompleted = profile.status === 'ready'
+  const hasProfileCompleted = profile.status !== 'ready'
 
   return (
     <div className="max-w-6xl space-y-6">
