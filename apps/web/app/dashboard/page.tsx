@@ -67,8 +67,15 @@ export default function DashboardEmptyPage() {
 
   return (
     <div className="max-w-6xl space-y-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+      <div className="mb-8 relative">
+        <div className="relative z-10">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2">
+            Welcome back, <span className="text-primary">Romain</span> 👋
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl">
+            Let’s get back to business. Your command center is ready.
+          </p>
+        </div>
       </div>
 
       {!hasProfileCompleted && <ProfileSetupPrompt />}

@@ -34,54 +34,96 @@ export function DashboardSidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 border-r border-border bg-card flex flex-col">
-      {/* Logo section at top */}
-      <div className="p-6 border-b border-border">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">A</span>
+    <aside className="fixed left-6 top-6 bottom-6 w-64 glass rounded-3xl flex flex-col z-50 overflow-hidden border border-white/20 shadow-2xl">
+      {/* Brand Section */}
+      <div className="p-6 pb-2">
+        <Link href="/" className="flex items-center gap-3 px-2">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
+            <span className="text-white font-bold text-xl">A</span>
           </div>
-          <span className="font-bold text-xl text-foreground">ApplyMate</span>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg leading-none tracking-tight">
+              ApplyMate
+            </span>
+            <span className="text-[10px] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-medium uppercase tracking-wider">
+              Workspace
+            </span>
+          </div>
         </Link>
       </div>
 
-      {/* Navigation items */}
-      <nav className="flex-1 p-4 space-y-1">
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent my-4 opacity-50" />
+
+      {/* Navigation */}
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-2">
+        <div className="text-xs font-semibold text-muted-foreground/50 px-4 mb-2 uppercase tracking-widest">
+          Menu
+        </div>
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                'group flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 relative overflow-hidden',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  ? 'bg-primary/10 text-primary shadow-sm hover:bg-primary/15'
+                  : 'text-muted-foreground hover:bg-white/50 hover:text-foreground hover:shadow-sm'
               )}
             >
-              <Icon className="h-4 w-4" />
-              {item.label}
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-primary rounded-r-full" />
+              )}
+              <Icon
+                className={cn(
+                  'h-5 w-5 transition-transform duration-300 group-hover:scale-110',
+                  isActive
+                    ? 'text-primary'
+                    : 'text-muted-foreground/70 group-hover:text-primary'
+                )}
+              />
+              <span className="relative z-10">{item.label}</span>
+              {isActive && (
+                <div className="absolute inset-0 bg-primary/5 rounded-2xl -z-0 animate-pulse" />
+              )}
             </Link>
           )
         })}
       </nav>
 
-      {/* User info section at bottom */}
-      <div className="p-4 border-t border-border">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">
-              John Doe
-            </p>
-            <Badge variant="secondary" className="mt-1 text-xs">
-              Free Plan
-            </Badge>
+      {/* User Section */}
+      <div className="p-4 mt-auto">
+        <div className="bg-white/40 p-1 rounded-2xl border border-white/20 shadow-sm backdrop-blur-sm">
+          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer group">
+            <div className="relative">
+              <Avatar className="h-10 w-10 border-2 border-white shadow-sm group-hover:border-primary/20 transition-colors">
+                <AvatarImage
+                  src="/placeholder.svg?height=40&width=40"
+                  alt="User"
+                />
+                <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 text-primary font-bold">
+                  JD
+                </AvatarFallback>
+              </Avatar>
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                John Doe
+              </p>
+              <div className="flex items-center gap-1.5">
+                <Badge
+                  variant="secondary"
+                  className="px-1.5 py-0 h-5 text-[10px] bg-white/50 text-muted-foreground border-0"
+                >
+                  Free
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
       </div>

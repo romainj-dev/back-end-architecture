@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -18,15 +18,21 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import {
   Search,
   Filter,
-  MoreVertical,
+  MoreHorizontal,
   Download,
   Eye,
   Trash2,
+  Calendar,
+  Building2,
+  Briefcase,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export type ApplicationStatus =
   | 'Pending'
@@ -45,13 +51,34 @@ export interface Application {
   tags: string[]
 }
 
-const statusColors: Record<ApplicationStatus, string> = {
-  Pending: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
-  Accepted: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
-  Applied: 'bg-purple-100 text-purple-800 hover:bg-purple-100',
-  Interview: 'bg-orange-100 text-orange-800 hover:bg-orange-100',
-  Rejected: 'bg-gray-100 text-gray-800 hover:bg-gray-100',
-  Offer: 'bg-green-100 text-green-800 hover:bg-green-100',
+const statusConfig: Record<
+  ApplicationStatus,
+  { color: string; label: string }
+> = {
+  Pending: {
+    color: 'bg-yellow-500/15 text-yellow-700 border-yellow-200',
+    label: 'Pending',
+  },
+  Accepted: {
+    color: 'bg-blue-500/15 text-blue-700 border-blue-200',
+    label: 'Accepted',
+  },
+  Applied: {
+    color: 'bg-indigo-500/15 text-indigo-700 border-indigo-200',
+    label: 'Applied',
+  },
+  Interview: {
+    color: 'bg-orange-500/15 text-orange-700 border-orange-200',
+    label: 'Interview',
+  },
+  Rejected: {
+    color: 'bg-red-500/15 text-red-700 border-red-200',
+    label: 'Rejected',
+  },
+  Offer: {
+    color: 'bg-green-500/15 text-green-700 border-green-200',
+    label: 'Offer',
+  },
 }
 
 export function ApplicationsTable({ items }: { items: null | Application[] }) {
@@ -63,233 +90,210 @@ export function ApplicationsTable({ items }: { items: null | Application[] }) {
   const isEmpty = items === null
 
   return (
-    <Card className={isEmpty ? 'opacity-60' : ''}>
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Applications</CardTitle>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1 sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by company, position, or tags..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-                disabled={isEmpty}
-              />
-            </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="gap-2 bg-transparent"
-                  disabled={isEmpty}
-                >
-                  <Filter className="h-4 w-4" />
-                  {statusFilter === 'All' ? 'All Status' : statusFilter}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setStatusFilter('All')}>
-                  All Status
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Pending')}>
-                  Pending
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Accepted')}>
-                  Accepted
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Applied')}>
-                  Applied
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Interview')}>
-                  Interview
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Rejected')}>
-                  Rejected
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setStatusFilter('Offer')}>
-                  Offer
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+    <div
+      className={cn(
+        'glass rounded-3xl border border-white/20 shadow-xl overflow-hidden',
+        isEmpty ? 'opacity-90' : ''
+      )}
+    >
+      <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Briefcase className="h-5 w-5 text-primary" />
+            Applications
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Manage and track your job applications
+          </p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Company</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date Applied</TableHead>
-                <TableHead>Tags</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+            <Input
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 bg-white/50 border-white/20 focus:bg-white transition-all w-full sm:w-64 rounded-xl"
+              disabled={isEmpty}
+            />
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="gap-2 bg-white/50 border-white/20 hover:bg-white hover:text-primary transition-all rounded-xl"
+                disabled={isEmpty}
+              >
+                <Filter className="h-4 w-4" />
+                {statusFilter === 'All' ? 'Filter' : statusFilter}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="rounded-xl border-white/20 glass"
+            >
+              <DropdownMenuItem onClick={() => setStatusFilter('All')}>
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-border/50" />
+              {Object.keys(statusConfig).map((status) => (
+                <DropdownMenuItem
+                  key={status}
+                  onClick={() => setStatusFilter(status as ApplicationStatus)}
+                >
+                  {status}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <div className="relative">
+        <Table>
+          <TableHeader className="bg-primary/5 hover:bg-primary/5">
+            <TableRow className="border-b border-white/10 hover:bg-transparent">
+              <TableHead className="py-4 font-semibold text-primary pl-6">
+                Company
+              </TableHead>
+              <TableHead className="py-4 font-semibold text-primary">
+                Position
+              </TableHead>
+              <TableHead className="py-4 font-semibold text-primary">
+                Status
+              </TableHead>
+              <TableHead className="py-4 font-semibold text-primary">
+                Date Applied
+              </TableHead>
+              <TableHead className="py-4 font-semibold text-primary">
+                Tags
+              </TableHead>
+              <TableHead className="py-4 font-semibold text-primary text-right pr-6">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isEmpty ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={6} className="h-64 border-none">
+                  <div className="flex flex-col items-center justify-center h-full animate-in fade-in duration-500">
+                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                      <Briefcase className="h-10 w-10 text-primary/40" />
+                    </div>
+                    <p className="text-foreground font-semibold text-lg mb-2">
+                      No applications yet
+                    </p>
+                    <p className="text-sm text-muted-foreground/80 max-w-sm text-center">
+                      Complete your profile setup to start tracking your job
+                      applications efficiently.
+                    </p>
+                  </div>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isEmpty ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-64">
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <svg
-                        className="w-48 h-48 mb-4 text-muted-foreground/30"
-                        viewBox="0 0 200 200"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          x="40"
-                          y="60"
-                          width="120"
-                          height="100"
-                          rx="8"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M40 80 L160 80"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <circle cx="60" cy="70" r="3" fill="currentColor" />
-                        <circle cx="70" cy="70" r="3" fill="currentColor" />
-                        <circle cx="80" cy="70" r="3" fill="currentColor" />
-                        <rect
-                          x="55"
-                          y="100"
-                          width="40"
-                          height="8"
-                          rx="4"
-                          fill="currentColor"
-                          opacity="0.3"
-                        />
-                        <rect
-                          x="105"
-                          y="100"
-                          width="45"
-                          height="8"
-                          rx="4"
-                          fill="currentColor"
-                          opacity="0.3"
-                        />
-                        <rect
-                          x="55"
-                          y="120"
-                          width="90"
-                          height="8"
-                          rx="4"
-                          fill="currentColor"
-                          opacity="0.3"
-                        />
-                        <rect
-                          x="55"
-                          y="140"
-                          width="70"
-                          height="8"
-                          rx="4"
-                          fill="currentColor"
-                          opacity="0.3"
-                        />
-                        <path
-                          d="M80 40 L100 40 L100 60"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d="M95 55 L100 60 L105 55"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <p className="text-muted-foreground font-medium mb-1">
-                        No applications yet
-                      </p>
-                      <p className="text-sm text-muted-foreground/70">
-                        Complete your profile to start tracking job applications
-                      </p>
+            ) : items.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-12 text-muted-foreground"
+                >
+                  No applications found matching your criteria
+                </TableCell>
+              </TableRow>
+            ) : (
+              items.map((app) => (
+                <TableRow
+                  key={app.id}
+                  className="border-b border-white/5 hover:bg-white/40 transition-colors group"
+                >
+                  <TableCell className="font-medium pl-6">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-white shadow-sm flex items-center justify-center border border-white/20">
+                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      {app.company}
                     </div>
                   </TableCell>
-                </TableRow>
-              ) : items.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-8 text-muted-foreground"
-                  >
-                    No applications found
+                  <TableCell>
+                    <span className="font-medium text-foreground/80">
+                      {app.position}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        'border backdrop-blur-md shadow-sm font-medium',
+                        statusConfig[app.status].color
+                      )}
+                    >
+                      {statusConfig[app.status].label}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {new Date(app.dateApplied).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      {app.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="text-xs bg-white/30 border-white/20 text-muted-foreground hover:bg-white/50 transition-colors"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-colors data-[state=open]:bg-primary/10 data-[state=open]:text-primary"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="rounded-xl border-white/20 glass"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-border/50" />
+                        <DropdownMenuItem className="cursor-pointer">
+                          <Eye className="h-4 w-4 mr-2 text-primary" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
+                          <Download className="h-4 w-4 mr-2" />
+                          Documents
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-border/50" />
+                        <DropdownMenuItem className="text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ) : (
-                items.map((app) => (
-                  <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.company}</TableCell>
-                    <TableCell>{app.position}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={statusColors[app.status]}
-                      >
-                        {app.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(app.dateApplied).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        {app.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Download className="h-4 w-4 mr-2" />
-                            Download Documents
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   )
 }
