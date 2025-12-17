@@ -1,60 +1,89 @@
-import { Button } from '@/components/ui/button'
-import { getSession, signOut } from '@/lib/auth'
-import Image from 'next/image'
-import { redirect } from 'next/navigation'
+import { DashboardSidebar } from '@/components/features/dashboard/dashboard-sidebar'
+import { ProfileSetupPrompt } from '@/components/features/dashboard/profile-setup-prompt'
+import { QuickApplicationInput } from '@/components/features/dashboard/quick-application-input'
+import {
+  ApplicationsTable,
+  type Application,
+} from '@/components/features/dashboard/applications-table'
 
 export const metadata = {
   title: 'Dashboard | ApplyMate',
   description: 'Your ApplyMate dashboard',
 }
 
-export default async function DashboardPage() {
-  const { user } = await getSession()
+const mockApplications: Application[] = [
+  {
+    id: '1',
+    company: 'Google',
+    position: 'Senior Software Engineer',
+    status: 'Interview',
+    dateApplied: '2024-01-15',
+    tags: ['Tech', 'Remote'],
+  },
+  {
+    id: '2',
+    company: 'Meta',
+    position: 'Product Manager',
+    status: 'Applied',
+    dateApplied: '2024-01-12',
+    tags: ['Tech', 'Leadership'],
+  },
+  {
+    id: '3',
+    company: 'Amazon',
+    position: 'Frontend Developer',
+    status: 'Accepted',
+    dateApplied: '2024-01-10',
+    tags: ['Tech', 'Frontend'],
+  },
+  {
+    id: '4',
+    company: 'Netflix',
+    position: 'UX Designer',
+    status: 'Rejected',
+    dateApplied: '2024-01-08',
+    tags: ['Design', 'Remote'],
+  },
+  {
+    id: '5',
+    company: 'Apple',
+    position: 'iOS Engineer',
+    status: 'Offer',
+    dateApplied: '2024-01-05',
+    tags: ['Tech', 'Mobile'],
+  },
+  {
+    id: '6',
+    company: 'Microsoft',
+    position: 'Cloud Solutions Architect',
+    status: 'Pending',
+    dateApplied: '2024-01-20',
+    tags: ['Tech', 'Cloud'],
+  },
+]
 
-  if (!user) {
-    redirect('/auth')
-  }
-
-  const handleSignOut = async () => {
-    'use server'
-    await signOut({ redirectTo: '/' })
-  }
+export default function DashboardEmptyPage() {
+  const profile = { status: 'ready' } as { status: 'ready' | 'incomplete' }
+  const hasProfileCompleted = profile.status === 'ready'
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-          <div className="bg-card rounded-lg border p-6">
-            <h2 className="text-xl font-semibold mb-4">Welcome back!</h2>
-            <div className="space-y-2">
-              {user.image && (
-                <Image
-                  src={user.image}
-                  alt={user.name || 'User avatar'}
-                  className="w-16 h-16 rounded-full mb-4"
-                  sizes="64px"
-                  width={64}
-                  height={64}
-                />
-              )}
-              <p>
-                <span className="font-medium">Name:</span>{' '}
-                {user.name || 'Not provided'}
-              </p>
-              <p>
-                <span className="font-medium">Email:</span> {user.email}
-              </p>
-              {user.id && (
-                <p>
-                  <span className="font-medium">User ID:</span> {user.id}
-                </p>
-              )}
-            </div>
-            <Button onClick={handleSignOut}>Sign out</Button>
+      <DashboardSidebar />
+      <main className="ml-64 px-8 py-8">
+        <div className="max-w-6xl space-y-6">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
           </div>
+
+          {!hasProfileCompleted && <ProfileSetupPrompt />}
+
+          <QuickApplicationInput disabled={!hasProfileCompleted} />
+
+          <ApplicationsTable
+            items={!hasProfileCompleted ? null : mockApplications}
+          />
         </div>
-      </div>
+      </main>
     </div>
   )
 }
