@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { usePlansQuery } from '@queries/use-plans-query'
+import { usePlansQuery } from '@/hooks/queries/use-plans-query'
 import { Check, RefreshCw } from 'lucide-react'
 interface Plan {
   id: string

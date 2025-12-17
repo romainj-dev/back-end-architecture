@@ -13,8 +13,8 @@ import { getMesh, type ExecuteMeshFn, type SubscribeMeshFn, type MeshContext as 
 import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
-import type { UploadServiceTypes } from './sources/UploadService/types';
 import type { PlanServiceTypes } from './sources/PlanService/types';
+import type { UploadServiceTypes } from './sources/UploadService/types';
 import type { UserServiceTypes } from './sources/UserService/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;

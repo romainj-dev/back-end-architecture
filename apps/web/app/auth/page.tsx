@@ -1,4 +1,4 @@
-import { AuthForm } from '@/components/auth-form'
+import { AuthForm } from '@/components/features/auth/auth-form'
 import Link from 'next/link'
 
 export const metadata = {

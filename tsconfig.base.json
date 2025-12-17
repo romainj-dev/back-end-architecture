@@ -5,8 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@shared/*": ["packages/shared/*"],
-      "@config/*": ["packages/config/*"],
-      "@queries/*": ["apps/web/hooks/queries/*"]
+      "@config/*": ["packages/config/*"]
     }
   }
 }
