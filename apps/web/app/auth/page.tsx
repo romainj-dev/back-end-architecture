@@ -9,28 +9,19 @@ export const metadata = {
 
 export default function AuthPage() {
   return (
-    <div className="h-screen w-full bg-background relative flex flex-col items-center justify-center p-4 overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-[0.2] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
+    <div className="w-full max-w-md relative z-10 space-y-6">
+      <div className="text-center">
+        <Link href="/" className="text-2xl font-bold inline-block">
+          ApplyMate
+        </Link>
+      </div>
 
-      {/* Vibrancy Orb */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
+      <AuthForm />
 
-      <div className="w-full max-w-md relative z-10 space-y-6">
-        <div className="text-center">
-          <Link href="/" className="text-2xl font-bold inline-block">
-            ApplyMate
-          </Link>
-        </div>
-
-        <AuthForm />
-
-        <div className="text-center text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            ← Back to home
-          </Link>
-        </div>
+      <div className="text-center text-sm text-muted-foreground">
+        <Link href="/" className="hover:text-foreground transition-colors">
+          ← Back to home
+        </Link>
       </div>
     </div>
   )

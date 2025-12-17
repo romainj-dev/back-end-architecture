@@ -1,4 +1,3 @@
-import { DashboardSidebar } from '@/components/features/dashboard/dashboard-sidebar'
 import { ProfileSetupPrompt } from '@/components/features/dashboard/profile-setup-prompt'
 import { QuickApplicationInput } from '@/components/features/dashboard/quick-application-input'
 import {
@@ -67,23 +66,18 @@ export default function DashboardEmptyPage() {
   const hasProfileCompleted = profile.status === 'ready'
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar />
-      <main className="ml-64 px-8 py-8">
-        <div className="max-w-6xl space-y-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          </div>
+    <div className="max-w-6xl space-y-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+      </div>
 
-          {!hasProfileCompleted && <ProfileSetupPrompt />}
+      {!hasProfileCompleted && <ProfileSetupPrompt />}
 
-          <QuickApplicationInput disabled={!hasProfileCompleted} />
+      <QuickApplicationInput disabled={!hasProfileCompleted} />
 
-          <ApplicationsTable
-            items={!hasProfileCompleted ? null : mockApplications}
-          />
-        </div>
-      </main>
+      <ApplicationsTable
+        items={!hasProfileCompleted ? null : mockApplications}
+      />
     </div>
   )
 }
