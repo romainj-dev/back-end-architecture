@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import AdventureIllustration from './adventure-illustration'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -179,16 +180,37 @@ export function ApplicationsTable({ items }: { items: null | Application[] }) {
             {isEmpty ? (
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={6} className="h-64 border-none">
-                  <div className="flex flex-col items-center justify-center h-full animate-in fade-in duration-500">
-                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                      <Briefcase className="h-10 w-10 text-primary/40" />
+                  <div className="flex flex-col items-center justify-center h-full py-12 animate-in fade-in duration-500">
+                    <div className="relative w-full max-w-[400px] aspect-[4/3] mb-8 group">
+                      <AdventureIllustration />
+
+                      {/* Absolute Positioned Labels - Fixed animations */}
+                      <div className="absolute top-[25%] right-[22%] animate-in fade-in zoom-in duration-700 delay-300 fill-mode-forwards">
+                        <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 shadow-sm px-3 py-1.5 rounded-xl transform -rotate-6 hover:rotate-0 transition-transform cursor-default">
+                          <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            Dream Job
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="absolute bottom-[28%] left-[15%] animate-in fade-in zoom-in duration-700 delay-150 fill-mode-forwards">
+                        <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 shadow-sm px-3 py-1.5 rounded-xl transform rotate-3 hover:rotate-0 transition-transform cursor-default">
+                          <p className="text-xs font-semibold text-slate-500">
+                            You are here
+                          </p>
+                          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45 border-b border-r border-slate-200/60"></div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-foreground font-semibold text-lg mb-2">
-                      No applications yet
-                    </p>
-                    <p className="text-sm text-muted-foreground/80 max-w-sm text-center">
-                      Complete your profile setup to start tracking your job
-                      applications efficiently.
+
+                    <h3 className="text-xl font-bold text-foreground mb-3 text-center">
+                      Ready to start your journey?
+                    </h3>
+                    <p className="text-muted-foreground max-w-[280px] sm:max-w-sm text-center text-sm leading-relaxed mb-8 whitespace-normal">
+                      Your applications dashboard is waiting for its first
+                      success story. Complete your profile to unlock full
+                      tracking capabilities.
                     </p>
                   </div>
                 </TableCell>
