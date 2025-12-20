@@ -3,7 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { FileText, User, Settings, BarChart3 } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Settings,
+  BarChart3,
+  Rocket,
+  List,
+} from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 
@@ -11,12 +17,17 @@ const navItems = [
   {
     label: 'Dashboard',
     href: '/dashboard',
-    icon: FileText,
+    icon: LayoutDashboard,
   },
   {
-    label: 'Profile',
-    href: '/dashboard/profile',
-    icon: User,
+    label: 'My Experience',
+    href: '/dashboard/my-experience',
+    icon: List,
+  },
+  {
+    label: 'My Goal',
+    href: '/dashboard/my-goal',
+    icon: Rocket,
   },
   {
     label: 'Statistics',
@@ -105,36 +116,38 @@ export function DashboardSidebar() {
 
         {/* User Section */}
         <div className="p-4 mt-auto">
-          <div className="bg-white/40 p-1 rounded-2xl border border-white/20 shadow-sm backdrop-blur-sm">
-            <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer group">
-              <div className="relative">
-                <Avatar className="h-10 w-10 border-2 border-white shadow-sm group-hover:border-primary/20 transition-colors">
-                  <AvatarImage
-                    src="/placeholder.svg?height=40&width=40"
-                    alt="User"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 text-primary font-bold">
-                    JD
-                  </AvatarFallback>
-                </Avatar>
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
-              </div>
+          <Link href="/dashboard/profile">
+            <div className="bg-white/40 p-1 rounded-2xl border border-white/20 shadow-sm backdrop-blur-sm">
+              <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/50 transition-colors cursor-pointer group">
+                <div className="relative">
+                  <Avatar className="h-10 w-10 border-2 border-white shadow-sm group-hover:border-primary/20 transition-colors">
+                    <AvatarImage
+                      src="/placeholder.svg?height=40&width=40"
+                      alt="User"
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 text-primary font-bold">
+                      JD
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
+                </div>
 
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                  John Doe
-                </p>
-                <div className="flex items-center gap-1.5">
-                  <Badge
-                    variant="secondary"
-                    className="px-1.5 py-0 h-5 text-[10px] bg-white/50 text-muted-foreground border-0"
-                  >
-                    Free plan
-                  </Badge>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                    John Doe
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <Badge
+                      variant="secondary"
+                      className="px-1.5 py-0 h-5 text-[10px] bg-white/50 text-muted-foreground border-0"
+                    >
+                      Free plan
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </aside>
     </GlassCard>

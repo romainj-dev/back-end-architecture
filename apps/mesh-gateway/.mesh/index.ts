@@ -465,14 +465,14 @@ const importFn: ImportFn = <T>(moduleId: string) => {
     case ".meshrc.ts":
       return import("./../.meshrc.js") as T;
     
+    case ".mesh/sources/PlanService/introspectionSchema":
+      return import("./sources/PlanService/introspectionSchema") as T;
+    
     case ".mesh/sources/UserService/introspectionSchema":
       return import("./sources/UserService/introspectionSchema") as T;
     
     case ".mesh/sources/UploadService/schemaWithAnnotations":
       return import("./sources/UploadService/schemaWithAnnotations") as T;
-    
-    case ".mesh/sources/PlanService/introspectionSchema":
-      return import("./sources/PlanService/introspectionSchema") as T;
     
     default:
       return Promise.reject(new Error(`Cannot find module '${relativeModuleId}'.`));

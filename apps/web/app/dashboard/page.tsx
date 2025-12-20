@@ -4,6 +4,7 @@ import {
   ApplicationsTable,
   type Application,
 } from '@/components/features/dashboard/applications-table'
+import { DashboardHeader } from '@/components/features/dashboard/commons/header'
 
 export const metadata = {
   title: 'Dashboard | ApplyMate',
@@ -63,20 +64,18 @@ const mockApplications: Application[] = [
 
 export default function DashboardEmptyPage() {
   const profile = { status: 'ready' } as { status: 'ready' | 'incomplete' }
-  const hasProfileCompleted = profile.status !== 'ready'
+  const hasProfileCompleted = profile.status === 'ready'
 
   return (
     <div className="max-w-6xl space-y-6">
-      <div className="mb-8 relative">
-        <div className="relative z-10">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2">
+      <DashboardHeader
+        title={
+          <>
             Welcome back, <span className="text-primary">Romain</span> 👋
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl">
-            Let’s get back to business. Your command center is ready.
-          </p>
-        </div>
-      </div>
+          </>
+        }
+        subtitle="Let’s get back to business. Your command center is ready."
+      />
 
       {!hasProfileCompleted && <ProfileSetupPrompt />}
 

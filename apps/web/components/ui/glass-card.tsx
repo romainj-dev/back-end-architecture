@@ -11,9 +11,17 @@ const glassCardVariants = cva(
       variant: {
         default: 'bg-background/60 border-border/60',
         accent: 'bg-orange-50/30 border-orange-200',
+        info: 'bg-blue-50/30 border-blue-200',
+        primary: 'bg-primary/5 border-primary/20',
+        dashed:
+          'border-dashed border-border bg-transparent hover:border-primary hover:bg-primary/5',
       },
       interactive: {
         true: 'hover:bg-white/40 hover:shadow-2xl cursor-pointer',
+        false: '',
+      },
+      selected: {
+        true: 'border-primary shadow-md bg-primary/5',
         false: '',
       },
       size: {
@@ -25,6 +33,7 @@ const glassCardVariants = cva(
     defaultVariants: {
       variant: 'default',
       interactive: false,
+      selected: false,
       size: 'default',
     },
   }
@@ -38,7 +47,15 @@ interface GlassCardProps
 
 const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
   (
-    { className, variant, interactive, size, asChild = false, ...props },
+    {
+      className,
+      variant,
+      interactive,
+      selected,
+      size,
+      asChild = false,
+      ...props
+    },
     ref
   ) => {
     const Comp = asChild ? Slot : 'div'
@@ -46,7 +63,7 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <Comp
         ref={ref}
         className={cn(
-          glassCardVariants({ variant, interactive, size, className })
+          glassCardVariants({ variant, interactive, selected, size, className })
         )}
         {...props}
       />

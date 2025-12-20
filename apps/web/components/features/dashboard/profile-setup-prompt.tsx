@@ -31,7 +31,7 @@ export function ProfileSetupPrompt() {
             variant="orange"
             className="rounded-xl shadow-lg shadow-orange/20 hover:shadow-orange/30 transition-all"
           >
-            <Link href="/dashboard/profile">
+            <Link href="/dashboard/my-experience">
               Set Up Profile
               <ArrowRight className="h-4 w-4 ml-2" />
             </Link>
