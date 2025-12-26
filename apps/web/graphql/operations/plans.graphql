@@ -1,0 +1,20 @@
+# Minimal fields for pricing display
+query GetPlanPricing {
+  plans {
+    id
+    code
+    price
+  }
+}
+
+# Full details for admin/detail views
+query GetPlanDetails {
+  plans {
+    id
+    code
+    price
+    createdAt
+    updatedAt
+  }
+}
+

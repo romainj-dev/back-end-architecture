@@ -1,14 +1,13 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { usePlansQuery } from '@/hooks/queries/use-plans-query'
+import { useGetPlanPricingQuery } from '@/graphql/generated'
 import { Check, RefreshCw } from 'lucide-react'
+
 interface Plan {
   id: string
   code: string
   price: number
-  createdAt: string
-  updatedAt: string
 }
 
 interface PlanCard {
@@ -56,8 +55,8 @@ const PLAN_METADATA = {
 } as const
 
 export function Pricing() {
-  const { data, isLoading, isError, refetch } = usePlansQuery()
-  const plans = data ?? []
+  const { data, isLoading, isError, refetch } = useGetPlanPricingQuery()
+  const plans = data?.plans ?? []
 
   const planCards = plans
     .map((plan: Plan): PlanCard | null => {

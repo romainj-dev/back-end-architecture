@@ -1,7 +1,6 @@
 import {
   dehydrate,
   HydrationBoundary,
-  QueryClient,
   type DehydratedState,
 } from '@tanstack/react-query'
 
@@ -13,15 +12,16 @@ import { Pricing } from '@/components/features/marketing/pricing'
 import { Security } from '@/components/features/marketing/security'
 import { CTABanner } from '@/components/features/marketing/cta-banner'
 
-import { getPlansCached } from '@/lib/connect/cached-server'
-import { queryKeys } from '@/lib/query-keys'
+import { getPlanPricingCached } from '@/lib/connect/cached-server'
+import { useGetPlanPricingQuery } from '@/graphql/generated'
+import { createPrefetchQueryClient } from '@/lib/query/create-prefetch-query-client'
 
 export default async function LandingPage() {
-  const queryClient = new QueryClient()
+  const queryClient = await createPrefetchQueryClient()
 
   await queryClient.prefetchQuery({
-    queryKey: queryKeys.plans.list(),
-    queryFn: getPlansCached,
+    queryKey: useGetPlanPricingQuery.getKey(),
+    queryFn: getPlanPricingCached,
   })
 
   const dehydratedState = dehydrate(queryClient)

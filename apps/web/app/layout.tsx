@@ -1,4 +1,5 @@
 import type React from 'react'
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { Geist } from 'next/font/google'
@@ -44,7 +45,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geist.variable} font-sans antialiased`}>
         <SessionProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <Suspense fallback={null}>
+            <QueryProvider>{children}</QueryProvider>
+          </Suspense>
         </SessionProvider>
         <Analytics />
       </body>

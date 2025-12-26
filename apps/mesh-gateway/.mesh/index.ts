@@ -14,8 +14,8 @@ import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';
 import { path as pathModule } from '@graphql-mesh/cross-helpers';
 import type { ImportFn } from '@graphql-mesh/types';
 import type { UserServiceTypes } from './sources/UserService/types';
-import type { PlanServiceTypes } from './sources/PlanService/types';
 import type { UploadServiceTypes } from './sources/UploadService/types';
+import type { PlanServiceTypes } from './sources/PlanService/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -465,14 +465,14 @@ const importFn: ImportFn = <T>(moduleId: string) => {
     case ".meshrc.ts":
       return import("./../.meshrc.js") as T;
     
-    case ".mesh/sources/PlanService/introspectionSchema":
-      return import("./sources/PlanService/introspectionSchema") as T;
+    case ".mesh/sources/UploadService/schemaWithAnnotations":
+      return import("./sources/UploadService/schemaWithAnnotations") as T;
     
     case ".mesh/sources/UserService/introspectionSchema":
       return import("./sources/UserService/introspectionSchema") as T;
     
-    case ".mesh/sources/UploadService/schemaWithAnnotations":
-      return import("./sources/UploadService/schemaWithAnnotations") as T;
+    case ".mesh/sources/PlanService/introspectionSchema":
+      return import("./sources/PlanService/introspectionSchema") as T;
     
     default:
       return Promise.reject(new Error(`Cannot find module '${relativeModuleId}'.`));

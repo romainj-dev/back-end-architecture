@@ -5,6 +5,8 @@ import 'server-only'
  * Connects directly to the Mesh gateway using MESH_GATEWAY_PORT.
  */
 
+import { print } from 'graphql'
+import type { DocumentNode } from 'graphql'
 import { FORWARDED_HEADERS } from '@/lib/connect/forwarded-headers'
 
 function getMeshGraphqlUrl(): string {
@@ -45,18 +47,20 @@ export function extractForwardableHeaders(
 }
 
 export async function graphqlRequest<T>(
-  query: string,
+  query: string | DocumentNode,
   variables?: Record<string, unknown>,
   context?: RequestContext
 ): Promise<T> {
   const url = getMeshGraphqlUrl()
+  const queryString = typeof query === 'string' ? query : print(query)
+
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...context?.headers,
     },
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query: queryString, variables }),
     cache: 'no-store',
   })
 
@@ -78,6 +82,3 @@ export async function graphqlRequest<T>(
 
   return json.data
 }
-
-// Re-export queries for convenience
-export { GET_PLANS } from './queries'

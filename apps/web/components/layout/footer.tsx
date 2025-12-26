@@ -91,7 +91,7 @@ export function Footer() {
         <div className="border-t border-border pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} ApplyMate. All rights reserved.
+              © 2026 ApplyMate. All rights reserved.
             </p>
             <div className="flex gap-6">
               <Link

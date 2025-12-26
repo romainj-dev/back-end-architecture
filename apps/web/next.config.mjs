@@ -12,6 +12,7 @@ loadEnvConfig(repoRoot)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  cacheComponents: true,
   turbopack: {
     root: repoRoot,
   },

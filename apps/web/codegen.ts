@@ -4,8 +4,18 @@ const config: CodegenConfig = {
   schema: '../mesh-gateway/.mesh/schema.graphql',
   documents: './graphql/**/*.graphql',
   generates: {
-    './graphql/generated/types.ts': {
-      plugins: ['typescript', 'typescript-operations'],
+    './graphql/generated/index.ts': {
+      plugins: [
+        'typescript',
+        'typescript-operations',
+        'typescript-react-query',
+      ],
+      config: {
+        fetcher: '@/lib/graphql/fetcher#graphqlFetcher',
+        exposeQueryKeys: true,
+        exposeFetcher: true,
+        reactQueryVersion: 5,
+      },
     },
   },
   config: {

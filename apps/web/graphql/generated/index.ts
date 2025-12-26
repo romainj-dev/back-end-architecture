@@ -1,3 +1,5 @@
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { graphqlFetcher } from '@/lib/graphql/fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -160,7 +162,78 @@ export type Upload__V1__UploadStatusRequest_Input = {
   upload_id: InputMaybe<Scalars['String']['input']>;
 };
 
-export type GetPlansQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPlanPricingQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPlansQuery = { plans: Array<{ id: string, code: string, price: number, createdAt: any, updatedAt: any }> };
+export type GetPlanPricingQuery = { plans: Array<{ id: string, code: string, price: number }> };
+
+export type GetPlanDetailsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPlanDetailsQuery = { plans: Array<{ id: string, code: string, price: number, createdAt: any, updatedAt: any }> };
+
+
+
+export const GetPlanPricingDocument = `
+    query GetPlanPricing {
+  plans {
+    id
+    code
+    price
+  }
+}
+    `;
+
+export const useGetPlanPricingQuery = <
+      TData = GetPlanPricingQuery,
+      TError = unknown
+    >(
+      variables?: GetPlanPricingQueryVariables,
+      options?: Omit<UseQueryOptions<GetPlanPricingQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPlanPricingQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetPlanPricingQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetPlanPricing'] : ['GetPlanPricing', variables],
+    queryFn: graphqlFetcher<GetPlanPricingQuery, GetPlanPricingQueryVariables>(GetPlanPricingDocument, variables),
+    ...options
+  }
+    )};
+
+useGetPlanPricingQuery.getKey = (variables?: GetPlanPricingQueryVariables) => variables === undefined ? ['GetPlanPricing'] : ['GetPlanPricing', variables];
+
+
+useGetPlanPricingQuery.fetcher = (variables?: GetPlanPricingQueryVariables, options?: RequestInit['headers']) => graphqlFetcher<GetPlanPricingQuery, GetPlanPricingQueryVariables>(GetPlanPricingDocument, variables, options);
+
+export const GetPlanDetailsDocument = `
+    query GetPlanDetails {
+  plans {
+    id
+    code
+    price
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export const useGetPlanDetailsQuery = <
+      TData = GetPlanDetailsQuery,
+      TError = unknown
+    >(
+      variables?: GetPlanDetailsQueryVariables,
+      options?: Omit<UseQueryOptions<GetPlanDetailsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetPlanDetailsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetPlanDetailsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetPlanDetails'] : ['GetPlanDetails', variables],
+    queryFn: graphqlFetcher<GetPlanDetailsQuery, GetPlanDetailsQueryVariables>(GetPlanDetailsDocument, variables),
+    ...options
+  }
+    )};
+
+useGetPlanDetailsQuery.getKey = (variables?: GetPlanDetailsQueryVariables) => variables === undefined ? ['GetPlanDetails'] : ['GetPlanDetails', variables];
+
+
+useGetPlanDetailsQuery.fetcher = (variables?: GetPlanDetailsQueryVariables, options?: RequestInit['headers']) => graphqlFetcher<GetPlanDetailsQuery, GetPlanDetailsQueryVariables>(GetPlanDetailsDocument, variables, options);

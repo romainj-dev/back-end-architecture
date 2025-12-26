@@ -1,47 +1,55 @@
-import { unstable_cache } from 'next/cache'
+import 'server-only'
+import { cacheLife, cacheTag } from 'next/cache'
 import { graphqlRequest } from '@/lib/graphql/server-client'
-import { GET_PLANS } from '@/lib/graphql/queries'
+import {
+  GetPlanPricingDocument,
+  GetPlanPricingQuery,
+} from '@/graphql/generated'
 
-interface GraphQLPlan {
-  id: string
-  code: string
-  price: number
-  createdAt: string
-  updatedAt: string
+function isLocalBuild(): boolean {
+  return process.env.CI !== 'true' && process.env.VERCEL !== '1'
 }
 
-interface GetPlansData {
-  plans: GraphQLPlan[]
-}
-
-export const cacheTags = {
-  plans: {
-    all: 'plans',
-    list: 'plans-list',
-  },
-} as const
-
-/**
- * Cached server-side function to fetch plans from Mesh GraphQL.
- * Uses Next.js unstable_cache for request deduplication and revalidation support.
- */
-export const getPlansCached = unstable_cache(
-  async (): Promise<GraphQLPlan[]> => {
-    const data = await graphqlRequest<GetPlansData>(GET_PLANS)
-    return data.plans
-  },
-  ['plans', 'list'],
-  {
-    tags: [cacheTags.plans.all, cacheTags.plans.list],
-    revalidate: 60,
+function isConnectionRefused(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false
   }
-)
+
+  if ('code' in error && error.code === 'ECONNREFUSED') {
+    return true
+  }
+
+  if ('cause' in error && error.cause && typeof error.cause === 'object') {
+    const cause = error.cause as { code?: string }
+    return cause.code === 'ECONNREFUSED'
+  }
+
+  return false
+}
 
 /**
- * Fetches plans without caching (for mutations that need fresh data).
- * Use getPlansCached for normal reads.
+ * Cached server-side function to fetch plan pricing from Mesh GraphQL.
+ * Uses Next.js 'use cache' directive for request deduplication and revalidation support.
  */
-export async function fetchPlansUncached(): Promise<GraphQLPlan[]> {
-  const data = await graphqlRequest<GetPlansData>(GET_PLANS)
-  return data.plans
+export async function getPlanPricingCached(): Promise<
+  GetPlanPricingQuery['plans']
+> {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('plans')
+
+  try {
+    const data = await graphqlRequest<GetPlanPricingQuery>(
+      GetPlanPricingDocument
+    )
+    return data.plans
+  } catch (error) {
+    if (isLocalBuild() && isConnectionRefused(error)) {
+      console.warn(
+        `[getPlanPricingCached] Mesh gateway is not running on port ${process.env.MESH_GATEWAY_PORT}. Returning empty pricing data to keep the local build going.`
+      )
+      return []
+    }
+    throw error
+  }
 }
