@@ -15,11 +15,14 @@ export class UserModel {
   @Field(() => String, { nullable: true })
   avatarUrl?: string | null
 
-  @Field(() => String, { nullable: true })
-  jobTitle?: string | null
-
   @Field(() => JsonObjectScalar, { nullable: true })
   metadata?: Record<string, unknown> | null
+
+  @Field(() => String)
+  provider!: 'google' | 'linkedin' | 'github'
+
+  @Field(() => String)
+  providerAccountId!: string
 
   @Field(() => GraphQLISODateTime)
   createdAt!: Date

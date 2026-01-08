@@ -3,6 +3,7 @@ import Google from 'next-auth/providers/google'
 import LinkedIn from 'next-auth/providers/linkedin'
 import GitHub from 'next-auth/providers/github'
 import { parseBffEnv } from '@shared/env/env-schema'
+import { upsertUser } from './upsert-user'
 
 const env = parseBffEnv()
 
@@ -37,18 +38,46 @@ export const authConfig = {
     strategy: 'jwt',
   },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      // On initial sign-in (account and user exist)
+      if (account && user) {
+        try {
+          // Upsert user in database and get UUID
+          const dbUser = await upsertUser({
+            provider: account.provider as 'google' | 'linkedin' | 'github',
+            providerAccountId: account.providerAccountId ?? account.id,
+            email: user.email ?? '',
+            fullName: user.name ?? user.email ?? '',
+            avatarUrl: user.image ?? null,
+            accessToken: account.access_token ?? null,
+            refreshToken: account.refresh_token ?? null,
+            tokenExpiresAt: account.expires_at
+              ? new Date(account.expires_at * 1000)
+              : null,
+          })
+
+          // Store database UUID in token
+          token.dbUserId = dbUser.id
+        } catch (error) {
+          console.error('Failed to upsert user:', error)
+          // Continue with provider ID as fallback
+          token.dbUserId = user.id
+        }
+
+        // Set user fields on initial sign-in
         token.id = user.id
         token.email = user.email
         token.name = user.name
         token.image = user.image
       }
+
+      // On subsequent token refreshes, dbUserId is already in token
       return token
     },
     session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
+        // Use database UUID if available, otherwise fallback to provider ID
+        session.user.id = (token.dbUserId as string) || (token.id as string)
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.image = token.image as string | null

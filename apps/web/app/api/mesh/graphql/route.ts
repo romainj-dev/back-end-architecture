@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   }
 
   const response = await fetch(
-    `http://localhost:${env.MESH_GATEWAY_PORT}/graphql`,
+    `${env.API_URL}:${env.MESH_GATEWAY_PORT}/graphql`,
     {
       method: 'POST',
       headers,

@@ -10,11 +10,12 @@ import type { DocumentNode } from 'graphql'
 import { FORWARDED_HEADERS } from '@/lib/connect/forwarded-headers'
 
 function getMeshGraphqlUrl(): string {
+  const apiUrl = process.env.API_URL
   const port = process.env.MESH_GATEWAY_PORT
-  if (!port) {
-    throw new Error('MESH_GATEWAY_PORT is not set')
+  if (!apiUrl || !port) {
+    throw new Error('API_URL or MESH_GATEWAY_PORT is not set')
   }
-  return `http://localhost:${port}/graphql`
+  return `${apiUrl}:${port}/graphql`
 }
 
 interface GraphQLResponse<T> {

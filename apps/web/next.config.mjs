@@ -30,7 +30,7 @@ const nextConfig = {
     return [
       {
         source: '/api/mesh/:path*',
-        destination: `http://localhost:${process.env.MESH_GATEWAY_PORT}/:path*`,
+        destination: `${process.env.API_URL}:${process.env.MESH_GATEWAY_PORT}/:path*`,
       },
     ]
   },

@@ -15,7 +15,8 @@ const sharedSchemaDir = resolve(
   'shared',
   'graphql'
 )
-const sharedSchemaPath = resolve(sharedSchemaDir, 'plan-schema.gql')
+const sharedSchemaPathGql = resolve(sharedSchemaDir, 'plan-schema.gql')
+const sharedSchemaPathGraphql = resolve(sharedSchemaDir, 'plan-schema.graphql')
 
 async function syncSchema() {
   try {
@@ -28,12 +29,14 @@ async function syncSchema() {
   }
 
   await mkdir(sharedSchemaDir, { recursive: true })
-  await copyFile(schemaPath, sharedSchemaPath)
+  // Copy to both .gql and .graphql for compatibility
+  await copyFile(schemaPath, sharedSchemaPathGql)
+  await copyFile(schemaPath, sharedSchemaPathGraphql)
   console.log(
-    `[sync-schema] Copied schema to ${sharedSchemaPath.replace(
+    `[sync-schema] Copied schema to ${sharedSchemaPathGql.replace(
       process.cwd(),
       ''
-    )}`
+    )} and .graphql`
   )
 }
 

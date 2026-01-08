@@ -4,7 +4,6 @@ import { UserResolver } from './user.resolver'
 import { UserService } from './user.service'
 import { SupabaseUserRepository } from './user.repository'
 import { USER_REPOSITORY } from './user.constants'
-import { UserGrpcController } from './user.grpc.controller'
 import { JsonObjectScalar } from '../common/scalars/json-object.scalar'
 
 @Module({
@@ -13,7 +12,6 @@ import { JsonObjectScalar } from '../common/scalars/json-object.scalar'
     UserResolver,
     UserService,
     JsonObjectScalar,
-    UserGrpcController,
     {
       provide: USER_REPOSITORY,
       useClass: SupabaseUserRepository,

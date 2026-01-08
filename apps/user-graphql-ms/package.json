@@ -8,13 +8,14 @@
     "build": "pnpm run type-check && pnpm run build:bundle",
     "build:bundle": "tsx scripts/build.ts",
     "dev": "node --import @swc-node/register/esm-register --watch src/main.ts",
+    "generate-schema": "node --import @swc-node/register/esm-register scripts/generate-schema.ts",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
     "start": "node dist/main.js",
     "start:debug": "node --inspect=0.0.0.0:9229 dist/main.js",
     "sync-schema": "node ./scripts/sync-schema.mjs",
     "test": "jest --runInBand",
     "type-check": "tsc --noEmit -p tsconfig.build.json",
-    "postbuild": "pnpm run sync-schema"
+    "postbuild": "pnpm run generate-schema && pnpm run sync-schema"
   },
   "dependencies": {
     "@apollo/server": "^4.11.1",

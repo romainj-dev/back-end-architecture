@@ -10,13 +10,21 @@ export const envSchema = z.object({
   UPLOAD_MS_PORT: z.coerce.number().int().positive(),
   // Auth.js
   AUTH_SECRET: z.string().min(1),
+  // Token encryption (32 bytes base64-encoded)
+  TOKEN_ENCRYPTION_KEY: z.string().min(1),
+  // Internal API key for service-to-service calls
+  INTERNAL_API_KEY: z.string().min(32),
 })
 
 export const bffEnvSchema = z.object({
+  API_URL: z.string().url(),
   MESH_GATEWAY_PORT: z.coerce.number().int().positive(),
+  USER_GRAPHQL_MS_PORT: z.coerce.number().int().positive(),
   // Auth.js
   AUTH_SECRET: z.string().min(1),
   AUTH_URL: z.string().url(),
+  // Internal API key for service-to-service calls
+  INTERNAL_API_KEY: z.string().min(32),
   // OAuth Providers
   AUTH_GOOGLE_ID: z.string().min(1).optional(),
   AUTH_GOOGLE_SECRET: z.string().min(1).optional(),

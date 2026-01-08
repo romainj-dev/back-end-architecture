@@ -25,26 +25,15 @@ directive @transport(subgraph: String, kind: String, location: String, options: 
 type Query {
   currentUser: User
   health: String!
-  plans: [PlanModel!]!
   user(id: ID!): User!
-  users(limit: Int): [User!]!
+  plans: [PlanModel!]!
   upload_v1_UploadService_connectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService")
 }
 
 type Mutation {
-  createUser(input: CreateUserRequest!): User!
-  deleteUser(id: ID!): Boolean!
-  updateUser(input: UpdateUserRequest!): User!
+  upsertUser(input: UpsertUserRequest!): User!
   upload_v1_UploadService_StartUpload(input: File): upload__v1__UploadResult @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "StartUpload", responseStream: false)
   upload_v1_UploadService_WatchUpload(input: upload__v1__UploadStatusRequest_Input): [upload__v1__UploadStatus] @grpcMethod(subgraph: "UploadService", rootJsonName: "Root0", objPath: "upload.v1.UploadService", methodName: "WatchUpload", responseStream: true)
-}
-
-input CreateUserRequest {
-  avatarUrl: String
-  email: String!
-  fullName: String!
-  jobTitle: String
-  metadata: JSONObject
 }
 
 """
@@ -55,21 +44,15 @@ scalar DateTime
 """Represents a simple JSON object (no arrays)."""
 scalar JSONObject
 
-type PlanModel {
-  code: String!
-  createdAt: DateTime!
-  id: String!
-  price: Float!
-  updatedAt: DateTime!
-}
-
-input UpdateUserRequest {
+input UpsertUserRequest {
+  accessToken: String
   avatarUrl: String
-  email: String
-  fullName: String
-  id: ID!
-  jobTitle: String
-  metadata: JSONObject
+  email: String!
+  fullName: String!
+  provider: String!
+  providerAccountId: String!
+  refreshToken: String
+  tokenExpiresAt: DateTime
 }
 
 type User {
@@ -78,8 +61,17 @@ type User {
   email: String!
   fullName: String!
   id: ID!
-  jobTitle: String
   metadata: JSONObject
+  provider: String!
+  providerAccountId: String!
+  updatedAt: DateTime!
+}
+
+type PlanModel {
+  code: String!
+  createdAt: DateTime!
+  id: String!
+  price: Float!
   updatedAt: DateTime!
 }
 

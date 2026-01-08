@@ -48,9 +48,8 @@ export type Scalars = {
 export type Query = {
   currentUser?: Maybe<User>;
   health: Scalars['String']['output'];
-  plans: Array<PlanModel>;
   user: User;
-  users: Array<User>;
+  plans: Array<PlanModel>;
   upload_v1_UploadService_connectivityState?: Maybe<ConnectivityState>;
 };
 
@@ -60,36 +59,19 @@ export type QueryuserArgs = {
 };
 
 
-export type QueryusersArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
 export type Queryupload_v1_UploadService_connectivityStateArgs = {
   tryToConnect?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type Mutation = {
-  createUser: User;
-  deleteUser: Scalars['Boolean']['output'];
-  updateUser: User;
+  upsertUser: User;
   upload_v1_UploadService_StartUpload?: Maybe<upload__v1__UploadResult>;
   upload_v1_UploadService_WatchUpload?: Maybe<Array<Maybe<upload__v1__UploadStatus>>>;
 };
 
 
-export type MutationcreateUserArgs = {
-  input: CreateUserRequest;
-};
-
-
-export type MutationdeleteUserArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationupdateUserArgs = {
-  input: UpdateUserRequest;
+export type MutationupsertUserArgs = {
+  input: UpsertUserRequest;
 };
 
 
@@ -102,29 +84,15 @@ export type Mutationupload_v1_UploadService_WatchUploadArgs = {
   input?: InputMaybe<upload__v1__UploadStatusRequest_Input>;
 };
 
-export type CreateUserRequest = {
+export type UpsertUserRequest = {
+  accessToken?: InputMaybe<Scalars['String']['input']>;
   avatarUrl?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   fullName: Scalars['String']['input'];
-  jobTitle?: InputMaybe<Scalars['String']['input']>;
-  metadata?: InputMaybe<Scalars['JSONObject']['input']>;
-};
-
-export type PlanModel = {
-  code: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['String']['output'];
-  price: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type UpdateUserRequest = {
-  avatarUrl?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  fullName?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['ID']['input'];
-  jobTitle?: InputMaybe<Scalars['String']['input']>;
-  metadata?: InputMaybe<Scalars['JSONObject']['input']>;
+  provider: Scalars['String']['input'];
+  providerAccountId: Scalars['String']['input'];
+  refreshToken?: InputMaybe<Scalars['String']['input']>;
+  tokenExpiresAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type User = {
@@ -133,8 +101,17 @@ export type User = {
   email: Scalars['String']['output'];
   fullName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  jobTitle?: Maybe<Scalars['String']['output']>;
   metadata?: Maybe<Scalars['JSONObject']['output']>;
+  provider: Scalars['String']['output'];
+  providerAccountId: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type PlanModel = {
+  code: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -274,17 +251,15 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
-  CreateUserRequest: CreateUserRequest;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']['output']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  UpsertUserRequest: UpsertUserRequest;
+  User: ResolverTypeWrapper<User>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   PlanModel: ResolverTypeWrapper<PlanModel>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  UpdateUserRequest: UpdateUserRequest;
-  User: ResolverTypeWrapper<User>;
   Subscription: ResolverTypeWrapper<Record<PropertyKey, never>>;
   ConnectivityState: ConnectivityState;
   upload__v1__UploadResult: ResolverTypeWrapper<upload__v1__UploadResult>;
@@ -292,6 +267,7 @@ export type ResolversTypes = ResolversObject<{
   upload__v1__UploadStatus: ResolverTypeWrapper<upload__v1__UploadStatus>;
   upload__v1__UploadStatusRequest_Input: upload__v1__UploadStatusRequest_Input;
   TransportOptions: ResolverTypeWrapper<Scalars['TransportOptions']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   UploadStatus: ResolverTypeWrapper<UploadStatus>;
 }>;
 
@@ -299,23 +275,22 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Query: Record<PropertyKey, never>;
   Mutation: Record<PropertyKey, never>;
-  CreateUserRequest: CreateUserRequest;
-  String: Scalars['String']['output'];
   DateTime: Scalars['DateTime']['output'];
   JSONObject: Scalars['JSONObject']['output'];
-  Boolean: Scalars['Boolean']['output'];
+  String: Scalars['String']['output'];
   ID: Scalars['ID']['output'];
+  UpsertUserRequest: UpsertUserRequest;
+  User: User;
+  Boolean: Scalars['Boolean']['output'];
   PlanModel: PlanModel;
   Float: Scalars['Float']['output'];
-  Int: Scalars['Int']['output'];
-  UpdateUserRequest: UpdateUserRequest;
-  User: User;
   Subscription: Record<PropertyKey, never>;
   upload__v1__UploadResult: upload__v1__UploadResult;
   File: Scalars['File']['output'];
   upload__v1__UploadStatus: upload__v1__UploadStatus;
   upload__v1__UploadStatusRequest_Input: upload__v1__UploadStatusRequest_Input;
   TransportOptions: Scalars['TransportOptions']['output'];
+  Int: Scalars['Int']['output'];
   UploadStatus: UploadStatus;
 }>;
 
@@ -357,16 +332,13 @@ export type transportDirectiveResolver<Result, Parent, ContextType = MeshContext
 export type QueryResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   currentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   health?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  plans?: Resolver<Array<ResolversTypes['PlanModel']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryuserArgs, 'id'>>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, Partial<QueryusersArgs>>;
+  plans?: Resolver<Array<ResolversTypes['PlanModel']>, ParentType, ContextType>;
   upload_v1_UploadService_connectivityState?: Resolver<Maybe<ResolversTypes['ConnectivityState']>, ParentType, ContextType, Partial<Queryupload_v1_UploadService_connectivityStateArgs>>;
 }>;
 
 export type MutationResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationcreateUserArgs, 'input'>>;
-  deleteUser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteUserArgs, 'id'>>;
-  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationupdateUserArgs, 'input'>>;
+  upsertUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationupsertUserArgs, 'input'>>;
   upload_v1_UploadService_StartUpload?: Resolver<Maybe<ResolversTypes['upload__v1__UploadResult']>, ParentType, ContextType, Partial<Mutationupload_v1_UploadService_StartUploadArgs>>;
   upload_v1_UploadService_WatchUpload?: Resolver<Maybe<Array<Maybe<ResolversTypes['upload__v1__UploadStatus']>>>, ParentType, ContextType, Partial<Mutationupload_v1_UploadService_WatchUploadArgs>>;
 }>;
@@ -379,22 +351,23 @@ export interface JSONObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
   name: 'JSONObject';
 }
 
-export type PlanModelResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['PlanModel'] = ResolversParentTypes['PlanModel']> = ResolversObject<{
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-}>;
-
 export type UserResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fullName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  jobTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metadata?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType>;
+  provider?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  providerAccountId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+}>;
+
+export type PlanModelResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['PlanModel'] = ResolversParentTypes['PlanModel']> = ResolversObject<{
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 }>;
 
@@ -436,8 +409,8 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
-  PlanModel?: PlanModelResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  PlanModel?: PlanModelResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   upload__v1__UploadResult?: upload__v1__UploadResultResolvers<ContextType>;
   File?: GraphQLScalarType;
@@ -465,11 +438,11 @@ const importFn: ImportFn = <T>(moduleId: string) => {
     case ".meshrc.ts":
       return import("./../.meshrc.js") as T;
     
-    case ".mesh/sources/UploadService/schemaWithAnnotations":
-      return import("./sources/UploadService/schemaWithAnnotations") as T;
-    
     case ".mesh/sources/UserService/introspectionSchema":
       return import("./sources/UserService/introspectionSchema") as T;
+    
+    case ".mesh/sources/UploadService/schemaWithAnnotations":
+      return import("./sources/UploadService/schemaWithAnnotations") as T;
     
     case ".mesh/sources/PlanService/introspectionSchema":
       return import("./sources/PlanService/introspectionSchema") as T;

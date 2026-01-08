@@ -42,6 +42,8 @@ const uploadProtoPath = resolve(
 )
 const uploadEndpoint = `localhost:${env.UPLOAD_MS_PORT}`
 
+const additionalResolversPath = resolve(currentDir, './mesh.resolvers.ts')
+
 export default {
   sources: [
     {
@@ -97,5 +99,5 @@ export default {
       }
     `,
   ],
-  additionalResolvers: [resolve(currentDir, './mesh.resolvers.ts')],
+  additionalResolvers: [additionalResolversPath],
 }

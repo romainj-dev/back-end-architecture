@@ -1,10 +1,8 @@
 import { createPromiseClient } from '@connectrpc/connect'
 import { createGrpcTransport } from '@connectrpc/connect-node'
-import {
-  UploadService,
-  type UploadStatus as RpcUploadStatus,
-} from '@shared/connect/gen/upload/v1/upload_connect'
-import { parseEnv } from '@shared/env/env-schema'
+import { UploadService } from '@shared/connect/gen/v1/upload_connect.ts'
+import type { UploadStatus as RpcUploadStatus } from '@shared/connect/gen/v1/upload_pb.ts'
+import { parseEnv } from '@shared/env/env-schema.ts'
 
 // Validated by Zod in `.meshrc.ts` during build/start
 const env = parseEnv()
@@ -16,7 +14,7 @@ interface UploadStatus {
   message?: string
 }
 
-export default {
+export const meshResolvers = {
   Subscription: {
     uploadStatus: {
       subscribe: async function* (
@@ -39,7 +37,9 @@ export default {
         payload.uploadStatus,
     },
   },
-} satisfies Record<string, unknown>
+} satisfies Record<'Subscription', Record<string, unknown>>
+
+export default meshResolvers
 
 function mapStatus(status: RpcUploadStatus): UploadStatus {
   return {

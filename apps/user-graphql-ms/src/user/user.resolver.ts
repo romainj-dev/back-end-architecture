@@ -1,31 +1,31 @@
-import {
-  Args,
-  Context,
-  ID,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
+import { Public } from '@shared/auth'
 import type { Request } from 'express'
 import { UserModel } from './user.model'
 import { UserService } from './user.service'
-import { CreateUserRequest } from './dto/create-user.input'
-import { UpdateUserRequest } from './dto/update-user.input'
+import { UpsertUserRequest } from './dto/upsert-user.input'
+import { InternalApiGuard } from '../common/guards/internal-api.guard'
 
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => [UserModel], { name: 'users' })
-  users(
-    @Args('limit', { type: () => Int, nullable: true }) limit?: number
-  ): Promise<UserModel[]> {
-    return this.userService.findAll(limit)
-  }
-
   @Query(() => UserModel, { name: 'user' })
-  user(@Args('id', { type: () => ID }) id: string): Promise<UserModel> {
+  user(
+    @Args('id', { type: () => ID }) id: string,
+    @Context('req') req: Request
+  ): Promise<UserModel> {
+    const headerValue = req.headers['x-user-id']
+    const requestingUserId = Array.isArray(headerValue)
+      ? headerValue[0]
+      : headerValue
+
+    // Users can only query their own record (or admins - future)
+    if (requestingUserId && requestingUserId !== id) {
+      throw new ForbiddenException('Cannot access other users')
+    }
+
     return this.userService.findById(id)
   }
 
@@ -41,22 +41,21 @@ export class UserResolver {
     return this.userService.findById(userId).catch(() => null)
   }
 
+  @Public()
   @Mutation(() => UserModel)
-  createUser(
-    @Args('input', { type: () => CreateUserRequest }) input: CreateUserRequest
+  @UseGuards(InternalApiGuard)
+  upsertUser(
+    @Args('input', { type: () => UpsertUserRequest }) input: UpsertUserRequest
   ): Promise<UserModel> {
-    return this.userService.create(input)
-  }
-
-  @Mutation(() => UserModel)
-  updateUser(
-    @Args('input', { type: () => UpdateUserRequest }) input: UpdateUserRequest
-  ): Promise<UserModel> {
-    return this.userService.update(input.id, input)
-  }
-
-  @Mutation(() => Boolean)
-  deleteUser(@Args('id', { type: () => ID }) id: string): Promise<boolean> {
-    return this.userService.delete(id)
+    return this.userService.upsert({
+      provider: input.provider,
+      providerAccountId: input.providerAccountId,
+      email: input.email,
+      fullName: input.fullName,
+      avatarUrl: input.avatarUrl,
+      accessToken: input.accessToken,
+      refreshToken: input.refreshToken,
+      tokenExpiresAt: input.tokenExpiresAt,
+    })
   }
 }

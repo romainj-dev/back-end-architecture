@@ -2,14 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateUserRequest {
-  avatarUrl: String
-  email: String!
-  fullName: String!
-  jobTitle: String
-  metadata: JSONObject
-}
-
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -19,25 +11,24 @@ scalar DateTime
 scalar JSONObject
 
 type Mutation {
-  createUser(input: CreateUserRequest!): User!
-  deleteUser(id: ID!): Boolean!
-  updateUser(input: UpdateUserRequest!): User!
+  upsertUser(input: UpsertUserRequest!): User!
 }
 
 type Query {
   currentUser: User
   health: String!
   user(id: ID!): User!
-  users(limit: Int): [User!]!
 }
 
-input UpdateUserRequest {
+input UpsertUserRequest {
+  accessToken: String
   avatarUrl: String
-  email: String
-  fullName: String
-  id: ID!
-  jobTitle: String
-  metadata: JSONObject
+  email: String!
+  fullName: String!
+  provider: String!
+  providerAccountId: String!
+  refreshToken: String
+  tokenExpiresAt: DateTime
 }
 
 type User {
@@ -46,7 +37,8 @@ type User {
   email: String!
   fullName: String!
   id: ID!
-  jobTitle: String
   metadata: JSONObject
+  provider: String!
+  providerAccountId: String!
   updatedAt: DateTime!
 }
