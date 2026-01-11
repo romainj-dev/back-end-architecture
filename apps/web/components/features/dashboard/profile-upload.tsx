@@ -15,7 +15,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Upload, FileText, Link2, CheckCircle2, Sparkles } from 'lucide-react'
 
-export function ProfileUpload({ onSubmit }: { onSubmit: () => void }) {
+type ProfileUploadPayload = {
+  file: File | null
+  linkedinUrl: string
+}
+
+export function ProfileUpload({
+  onSubmit,
+}: {
+  onSubmit: (payload: ProfileUploadPayload) => void
+}) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [linkedinUrl, setLinkedinUrl] = useState('')
   const [uploadMethod, setUploadMethod] = useState<'file' | 'linkedin' | null>(
@@ -92,7 +101,12 @@ export function ProfileUpload({ onSubmit }: { onSubmit: () => void }) {
 
           {uploadMethod === 'file' && (
             <Button
-              onClick={onSubmit}
+              onClick={() =>
+                onSubmit({
+                  file: uploadedFile,
+                  linkedinUrl: '',
+                })
+              }
               className="w-full bg-primary hover:bg-primary/90"
             >
               <Sparkles className="h-4 w-4 mr-2" />
@@ -149,7 +163,12 @@ export function ProfileUpload({ onSubmit }: { onSubmit: () => void }) {
 
           {uploadMethod === 'linkedin' && (
             <Button
-              onClick={onSubmit}
+              onClick={() =>
+                onSubmit({
+                  file: null,
+                  linkedinUrl,
+                })
+              }
               className="w-full bg-primary hover:bg-primary/90"
             >
               <Sparkles className="h-4 w-4 mr-2" />

@@ -13,6 +13,39 @@ import {
 export default function InitExperiencePage() {
   const [step, setStep] = useState<Step>('input')
 
+  const handleSubmit = async (payload: {
+    file: File | null
+    linkedinUrl: string
+  }) => {
+    if (!payload.file && !payload.linkedinUrl) {
+      return
+    }
+
+    setStep('processing')
+
+    const formData = new FormData()
+    if (payload.file) {
+      formData.append('file', payload.file)
+    }
+    if (payload.linkedinUrl) {
+      formData.append('linkedinUrl', payload.linkedinUrl)
+    }
+
+    const provider =
+      process.env.NEXT_PUBLIC_RESUME_PARSER_PROVIDER ?? 'affinda'
+
+    try {
+      const response = await fetch(`/api/resume/parse?provider=${provider}`, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+      console.log('Resume parse response', { provider, data })
+    } catch (error) {
+      console.error('Resume parse failed', error)
+    }
+  }
+
   return (
     <div className="max-w-6xl space-y-6">
       <DashboardHeader
@@ -47,7 +80,7 @@ export default function InitExperiencePage() {
           </GlassCard>
 
           {/* Input resume or Linkedin */}
-          <ProfileUpload onSubmit={() => setStep('processing')} />
+          <ProfileUpload onSubmit={handleSubmit} />
         </div>
       )}
 
