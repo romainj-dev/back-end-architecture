@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Sparkles, Check, Loader2 } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 
 import { DashboardHeader } from '@/components/features/dashboard/commons/header'
 import { ProfileUpload } from '@/components/features/dashboard/profile-upload'
@@ -49,25 +49,6 @@ export default function InitExperiencePage() {
 
       {step === 'input' && (
         <div className="space-y-6">
-          <GlassCard variant="info" className="relative overflow-hidden">
-            <div className="flex items-start gap-4 sm:gap-5 relative z-10">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100/50 flex items-center justify-center shadow-sm">
-                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                </div>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1">
-                  Recommended: Share your experience up-to-date
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Upload your resume or paste your LinkedIn URL for the best
-                  results.
-                </p>
-              </div>
-            </div>
-          </GlassCard>
-
           <ProfileUpload
             onResumeUpload={handleResumeUpload}
             isResumeUploading={isResumePending}
