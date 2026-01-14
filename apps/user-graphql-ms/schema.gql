@@ -7,17 +7,144 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input ExperienceLearningInput {
+  credentialUrl: String
+  description: String
+  endDate: String
+  entryType: String!
+  fieldOfStudy: String
+  institution: String!
+  program: String
+  startDate: String
+}
+
+type ExperienceLearningModel {
+  createdAt: DateTime!
+  credentialUrl: String
+  description: String
+  endDate: String
+  entryType: String!
+  fieldOfStudy: String
+  id: ID!
+  institution: String!
+  profileId: String!
+  program: String
+  startDate: String
+  updatedAt: DateTime!
+}
+
+type ExperienceMutationResult {
+  learningCount: Float!
+  profileId: ID!
+  rolesCount: Float!
+}
+
+type ExperienceProfileAggregateModel {
+  learning: [ExperienceLearningModel!]!
+  profile: ExperienceProfileModel!
+  roles: [ExperienceRoleModel!]!
+}
+
+input ExperienceProfileInput {
+  customFields: JSONObject
+  headline: String
+  location: String
+  skills: [String!]
+  summary: String
+  yearsOfExperience: Int
+}
+
+type ExperienceProfileModel {
+  createdAt: DateTime!
+  customFields: JSONObject
+  headline: String
+  id: ID!
+  ingestionMetadata: JSONObject
+  location: String
+  rawPayload: JSONObject
+  skills: [String!]!
+  summary: String
+  updatedAt: DateTime!
+  userId: String!
+  yearsOfExperience: Int
+}
+
+input ExperienceRoleInput {
+  company: String!
+  customFields: JSONObject
+  durationLabel: String
+  employmentType: String
+  endDate: String
+  isCurrent: Boolean
+  keyAchievements: [String!]
+  location: String
+  methodologies: [String!]
+  missingDetails: String
+  periodLabel: String
+  startDate: String
+  status: String
+  summary: String
+  teamStructure: String
+  techStack: [String!]
+  title: String!
+}
+
+type ExperienceRoleModel {
+  company: String!
+  createdAt: DateTime!
+  customFields: JSONObject
+  durationLabel: String
+  employmentType: String
+  endDate: String
+  id: ID!
+  isCurrent: Boolean
+  keyAchievements: [String!]!
+  location: String
+  methodologies: [String!]!
+  missingDetails: String
+  periodLabel: String
+  profileId: String!
+  projects: [ExperienceRoleProjectModel!]!
+  startDate: String
+  status: String!
+  summary: String
+  teamStructure: String
+  techStack: [String!]!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type ExperienceRoleProjectModel {
+  achievements: [String!]!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  period: String
+  roleId: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
 """Represents a simple JSON object (no arrays)."""
 scalar JSONObject
 
 type Mutation {
+  saveExperience(input: SaveExperienceInput!): ExperienceMutationResult!
   upsertUser(input: UpsertUserRequest!): User!
 }
 
 type Query {
   currentUser: User
+  experienceProfile: ExperienceProfileAggregateModel
   health: String!
   user(id: ID!): User!
+}
+
+input SaveExperienceInput {
+  learning: [ExperienceLearningInput!]
+  profile: ExperienceProfileInput!
+  rawPayload: JSONObject
+  roles: [ExperienceRoleInput!]
 }
 
 input UpsertUserRequest {

@@ -1,0 +1,8 @@
+mutation SaveExperience($input: SaveExperienceInput!) {
+  saveExperience(input: $input) {
+    profileId
+    rolesCount
+    learningCount
+  }
+}
+

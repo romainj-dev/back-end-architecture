@@ -1,7 +1,7 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { graphqlFetcher } from '@/lib/graphql/fetcher';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null;
+export type Maybe<T> = T | null | undefined;
+export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -30,35 +30,134 @@ export enum ConnectivityState {
   TransientFailure = 'TRANSIENT_FAILURE'
 }
 
-export type CreateUserRequest = {
-  avatarUrl: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  fullName: Scalars['String']['input'];
-  jobTitle: InputMaybe<Scalars['String']['input']>;
-  metadata: InputMaybe<Scalars['JSONObject']['input']>;
+export type ExperienceLearningInput = {
+  credentialUrl?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  entryType: Scalars['String']['input'];
+  fieldOfStudy?: InputMaybe<Scalars['String']['input']>;
+  institution: Scalars['String']['input'];
+  program?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ExperienceLearningModel = {
+  createdAt: Scalars['DateTime']['output'];
+  credentialUrl: Maybe<Scalars['String']['output']>;
+  description: Maybe<Scalars['String']['output']>;
+  endDate: Maybe<Scalars['String']['output']>;
+  entryType: Scalars['String']['output'];
+  fieldOfStudy: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  institution: Scalars['String']['output'];
+  profileId: Scalars['String']['output'];
+  program: Maybe<Scalars['String']['output']>;
+  startDate: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ExperienceMutationResult = {
+  learningCount: Scalars['Float']['output'];
+  profileId: Scalars['ID']['output'];
+  rolesCount: Scalars['Float']['output'];
+};
+
+export type ExperienceProfileAggregateModel = {
+  learning: Array<ExperienceLearningModel>;
+  profile: ExperienceProfileModel;
+  roles: Array<ExperienceRoleModel>;
+};
+
+export type ExperienceProfileInput = {
+  customFields?: InputMaybe<Scalars['JSONObject']['input']>;
+  headline?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  summary?: InputMaybe<Scalars['String']['input']>;
+  yearsOfExperience?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ExperienceProfileModel = {
+  createdAt: Scalars['DateTime']['output'];
+  customFields: Maybe<Scalars['JSONObject']['output']>;
+  headline: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  ingestionMetadata: Maybe<Scalars['JSONObject']['output']>;
+  location: Maybe<Scalars['String']['output']>;
+  rawPayload: Maybe<Scalars['JSONObject']['output']>;
+  skills: Array<Scalars['String']['output']>;
+  summary: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  userId: Scalars['String']['output'];
+  yearsOfExperience: Maybe<Scalars['Int']['output']>;
+};
+
+export type ExperienceRoleInput = {
+  company: Scalars['String']['input'];
+  customFields?: InputMaybe<Scalars['JSONObject']['input']>;
+  durationLabel?: InputMaybe<Scalars['String']['input']>;
+  employmentType?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  isCurrent?: InputMaybe<Scalars['Boolean']['input']>;
+  keyAchievements?: InputMaybe<Array<Scalars['String']['input']>>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  methodologies?: InputMaybe<Array<Scalars['String']['input']>>;
+  missingDetails?: InputMaybe<Scalars['String']['input']>;
+  periodLabel?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  summary?: InputMaybe<Scalars['String']['input']>;
+  teamStructure?: InputMaybe<Scalars['String']['input']>;
+  techStack?: InputMaybe<Array<Scalars['String']['input']>>;
+  title: Scalars['String']['input'];
+};
+
+export type ExperienceRoleModel = {
+  company: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  customFields: Maybe<Scalars['JSONObject']['output']>;
+  durationLabel: Maybe<Scalars['String']['output']>;
+  employmentType: Maybe<Scalars['String']['output']>;
+  endDate: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  isCurrent: Maybe<Scalars['Boolean']['output']>;
+  keyAchievements: Array<Scalars['String']['output']>;
+  location: Maybe<Scalars['String']['output']>;
+  methodologies: Array<Scalars['String']['output']>;
+  missingDetails: Maybe<Scalars['String']['output']>;
+  periodLabel: Maybe<Scalars['String']['output']>;
+  profileId: Scalars['String']['output'];
+  projects: Array<ExperienceRoleProjectModel>;
+  startDate: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  summary: Maybe<Scalars['String']['output']>;
+  teamStructure: Maybe<Scalars['String']['output']>;
+  techStack: Array<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ExperienceRoleProjectModel = {
+  achievements: Array<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  period: Maybe<Scalars['String']['output']>;
+  roleId: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Mutation = {
-  createUser: User;
-  deleteUser: Scalars['Boolean']['output'];
-  updateUser: User;
+  saveExperience: ExperienceMutationResult;
   upload_v1_UploadService_StartUpload: Maybe<Upload__V1__UploadResult>;
   upload_v1_UploadService_WatchUpload: Maybe<Array<Maybe<Upload__V1__UploadStatus>>>;
+  upsertUser: User;
 };
 
 
-export type MutationCreateUserArgs = {
-  input: CreateUserRequest;
-};
-
-
-export type MutationDeleteUserArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserRequest;
+export type MutationSaveExperienceArgs = {
+  input: SaveExperienceInput;
 };
 
 
@@ -71,6 +170,11 @@ export type MutationUpload_V1_UploadService_WatchUploadArgs = {
   input: InputMaybe<Upload__V1__UploadStatusRequest_Input>;
 };
 
+
+export type MutationUpsertUserArgs = {
+  input: UpsertUserRequest;
+};
+
 export type PlanModel = {
   code: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -81,11 +185,11 @@ export type PlanModel = {
 
 export type Query = {
   currentUser: Maybe<User>;
+  experienceProfile: Maybe<ExperienceProfileAggregateModel>;
   health: Scalars['String']['output'];
   plans: Array<PlanModel>;
   upload_v1_UploadService_connectivityState: Maybe<ConnectivityState>;
   user: User;
-  users: Array<User>;
 };
 
 
@@ -98,9 +202,11 @@ export type QueryUserArgs = {
   id: Scalars['ID']['input'];
 };
 
-
-export type QueryUsersArgs = {
-  limit: InputMaybe<Scalars['Int']['input']>;
+export type SaveExperienceInput = {
+  learning?: InputMaybe<Array<ExperienceLearningInput>>;
+  profile: ExperienceProfileInput;
+  rawPayload?: InputMaybe<Scalars['JSONObject']['input']>;
+  roles?: InputMaybe<Array<ExperienceRoleInput>>;
 };
 
 export type Subscription = {
@@ -118,20 +224,22 @@ export type SubscriptionUpload_V1_UploadService_WatchUploadArgs = {
   input: InputMaybe<Upload__V1__UploadStatusRequest_Input>;
 };
 
-export type UpdateUserRequest = {
-  avatarUrl: InputMaybe<Scalars['String']['input']>;
-  email: InputMaybe<Scalars['String']['input']>;
-  fullName: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['ID']['input'];
-  jobTitle: InputMaybe<Scalars['String']['input']>;
-  metadata: InputMaybe<Scalars['JSONObject']['input']>;
-};
-
 export type UploadStatus = {
   message: Maybe<Scalars['String']['output']>;
   progress: Maybe<Scalars['Int']['output']>;
   status: Scalars['String']['output'];
   uploadId: Scalars['ID']['output'];
+};
+
+export type UpsertUserRequest = {
+  accessToken?: InputMaybe<Scalars['String']['input']>;
+  avatarUrl?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  fullName: Scalars['String']['input'];
+  provider: Scalars['String']['input'];
+  providerAccountId: Scalars['String']['input'];
+  refreshToken?: InputMaybe<Scalars['String']['input']>;
+  tokenExpiresAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type User = {
@@ -140,8 +248,9 @@ export type User = {
   email: Scalars['String']['output'];
   fullName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  jobTitle: Maybe<Scalars['String']['output']>;
   metadata: Maybe<Scalars['JSONObject']['output']>;
+  provider: Scalars['String']['output'];
+  providerAccountId: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -159,8 +268,15 @@ export type Upload__V1__UploadStatus = {
 };
 
 export type Upload__V1__UploadStatusRequest_Input = {
-  upload_id: InputMaybe<Scalars['String']['input']>;
+  upload_id?: InputMaybe<Scalars['String']['input']>;
 };
+
+export type SaveExperienceMutationVariables = Exact<{
+  input: SaveExperienceInput;
+}>;
+
+
+export type SaveExperienceMutation = { saveExperience: { profileId: string, rolesCount: number, learningCount: number } };
 
 export type GetPlanPricingQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -173,6 +289,32 @@ export type GetPlanDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetPlanDetailsQuery = { plans: Array<{ id: string, code: string, price: number, createdAt: any, updatedAt: any }> };
 
 
+
+export const SaveExperienceDocument = `
+    mutation SaveExperience($input: SaveExperienceInput!) {
+  saveExperience(input: $input) {
+    profileId
+    rolesCount
+    learningCount
+  }
+}
+    `;
+
+export const useSaveExperienceMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SaveExperienceMutation, TError, SaveExperienceMutationVariables, TContext>) => {
+    
+    return useMutation<SaveExperienceMutation, TError, SaveExperienceMutationVariables, TContext>(
+      {
+    mutationKey: ['SaveExperience'],
+    mutationFn: (variables?: SaveExperienceMutationVariables) => graphqlFetcher<SaveExperienceMutation, SaveExperienceMutationVariables>(SaveExperienceDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useSaveExperienceMutation.fetcher = (variables: SaveExperienceMutationVariables, options?: RequestInit['headers']) => graphqlFetcher<SaveExperienceMutation, SaveExperienceMutationVariables>(SaveExperienceDocument, variables, options);
 
 export const GetPlanPricingDocument = `
     query GetPlanPricing {

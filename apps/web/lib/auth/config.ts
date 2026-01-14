@@ -41,6 +41,8 @@ export const authConfig = {
     async jwt({ token, user, account }) {
       // On initial sign-in (account and user exist)
       if (account && user) {
+        token.provider = account.provider as 'google' | 'linkedin' | 'github'
+
         try {
           // Upsert user in database and get UUID
           const dbUser = await upsertUser({
@@ -81,6 +83,11 @@ export const authConfig = {
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.image = token.image as string | null
+        session.user.provider = token.provider as
+          | 'google'
+          | 'linkedin'
+          | 'github'
+          | undefined
       }
       return session
     },

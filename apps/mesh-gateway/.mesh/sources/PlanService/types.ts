@@ -25,10 +25,10 @@ export type Scalars = {
 };
 
 export type PlanModel = {
-  code: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
+  code: Scalars['String']['output'];
   price: Scalars['Float']['output'];
+  createdAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 

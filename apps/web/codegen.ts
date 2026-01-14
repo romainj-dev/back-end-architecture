@@ -19,8 +19,13 @@ const config: CodegenConfig = {
     },
   },
   config: {
-    avoidOptionals: true,
-    maybeValue: 'T | null',
+    avoidOptionals: {
+      field: true,
+      object: true,
+      inputValue: false,
+      defaultValue: true,
+    },
+    maybeValue: 'T | null | undefined',
     skipTypename: true,
   },
 }

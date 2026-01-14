@@ -1,17 +1,42 @@
 'use client'
 
-import { useState } from 'react'
-import { DashboardHeader } from '@/components/features/dashboard/commons/header'
-import { GlassCard } from '@/components/ui/glass-card'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Sparkles, Check, Loader2 } from 'lucide-react'
+
+import { DashboardHeader } from '@/components/features/dashboard/commons/header'
 import { ProfileUpload } from '@/components/features/dashboard/profile-upload'
 import {
   ProgressSteps,
   type Step,
 } from '@/components/features/my-experience/progress-steps'
+import { GlassCard } from '@/components/ui/glass-card'
+import { uploadResume } from '../_actions/upload-resume'
 
 export default function InitExperiencePage() {
   const [step, setStep] = useState<Step>('input')
+  const [resumeError, setResumeError] = useState<string | null>(null)
+  const [isResumePending, startResumeTransition] = useTransition()
+  const router = useRouter()
+
+  const handleResumeUpload = async (file: File) => {
+    setResumeError(null)
+    setStep('processing')
+
+    startResumeTransition(async () => {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const result = await uploadResume(formData)
+
+      if (result.success) {
+        router.push('/dashboard/my-experience/_complete')
+      } else {
+        setResumeError(result.error ?? 'Failed to upload resume')
+        setStep('input')
+      }
+    })
+  }
 
   return (
     <div className="max-w-6xl space-y-6">
@@ -20,13 +45,10 @@ export default function InitExperiencePage() {
         subtitle="No tedious forms. Just share your experience however you'd like."
       />
 
-      {/* Progress indicator */}
       <ProgressSteps step={step} />
 
-      {/* Input Step */}
       {step === 'input' && (
         <div className="space-y-6">
-          {/* Recommended approach callout */}
           <GlassCard variant="info" className="relative overflow-hidden">
             <div className="flex items-start gap-4 sm:gap-5 relative z-10">
               <div className="flex-shrink-0">
@@ -46,12 +68,14 @@ export default function InitExperiencePage() {
             </div>
           </GlassCard>
 
-          {/* Input resume or Linkedin */}
-          <ProfileUpload onSubmit={() => setStep('processing')} />
+          <ProfileUpload
+            onResumeUpload={handleResumeUpload}
+            isResumeUploading={isResumePending}
+            resumeError={resumeError}
+          />
         </div>
       )}
 
-      {/* Processing Step */}
       {step === 'processing' && (
         <div className="flex items-center justify-center py-20">
           <GlassCard className="max-w-lg w-full">

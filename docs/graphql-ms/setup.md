@@ -11,7 +11,6 @@
   - `email (text)`
   - `full_name (text)`
   - `avatar_url (text, nullable)`
-  - `job_title (text, nullable)`
   - `metadata (jsonb, nullable)`
   - `created_at / updated_at (timestamptz, default now())`
 

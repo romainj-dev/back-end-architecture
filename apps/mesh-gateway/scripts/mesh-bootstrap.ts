@@ -31,11 +31,10 @@ async function main(): Promise<void> {
   const port = Number(env.MESH_GATEWAY_PORT)
 
   createServer(async (req: IncomingMessage, res: ServerResponse) => {
-    // Validate JWT and add user headers to context
+    // Validate JWT and add user headers to request for downstream services
     const user = await validateJWT(req, env.AUTH_SECRET)
     if (user) {
       const userHeaders = createUserHeaders(user)
-      // Add user headers to the request so mesh can access them
       Object.entries(userHeaders).forEach(([key, value]) => {
         req.headers[key] = value
       })

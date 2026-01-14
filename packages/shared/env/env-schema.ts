@@ -32,6 +32,8 @@ export const bffEnvSchema = z.object({
   AUTH_LINKEDIN_SECRET: z.string().min(1).optional(),
   AUTH_GITHUB_ID: z.string().min(1).optional(),
   AUTH_GITHUB_SECRET: z.string().min(1).optional(),
+  // Resume Parsers
+  RESUME_PARSER_KEY: z.string().min(1).optional(),
 })
 
 export const publicEnvSchema = z.object({

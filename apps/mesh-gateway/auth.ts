@@ -34,8 +34,7 @@ export async function validateJWT(
       email: payload.email as string,
       name: payload.name as string | undefined,
     }
-  } catch (error) {
-    console.error('JWT validation error:', error)
+  } catch {
     return null
   }
 }

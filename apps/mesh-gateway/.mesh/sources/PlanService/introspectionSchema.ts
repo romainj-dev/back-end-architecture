@@ -22,23 +22,6 @@ const schemaAST = {
       "directives": []
     },
     {
-      "kind": "ScalarTypeDefinition",
-      "description": {
-        "kind": "StringValue",
-        "value": "A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.",
-        "block": true,
-        "loc": {
-          "start": 171,
-          "end": 272
-        }
-      },
-      "name": {
-        "kind": "Name",
-        "value": "DateTime"
-      },
-      "directives": []
-    },
-    {
       "kind": "ObjectTypeDefinition",
       "name": {
         "kind": "Name",
@@ -49,7 +32,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "code"
+            "value": "id"
           },
           "arguments": [],
           "type": {
@@ -68,26 +51,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "createdAt"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "DateTime"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "id"
+            "value": "code"
           },
           "arguments": [],
           "type": {
@@ -125,6 +89,25 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
+            "value": "createdAt"
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "DateTime"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
             "value": "updatedAt"
           },
           "arguments": [],
@@ -142,6 +125,23 @@ const schemaAST = {
         }
       ],
       "interfaces": [],
+      "directives": []
+    },
+    {
+      "kind": "ScalarTypeDefinition",
+      "description": {
+        "kind": "StringValue",
+        "value": "A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.",
+        "block": true,
+        "loc": {
+          "start": 283,
+          "end": 384
+        }
+      },
+      "name": {
+        "kind": "Name",
+        "value": "DateTime"
+      },
       "directives": []
     },
     {

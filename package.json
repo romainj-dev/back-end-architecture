@@ -27,7 +27,9 @@
     "test": "turbo run test",
     "connect:codegen": "pnpm --filter @apply-mate/shared proto:generate",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "cache:clear:next": "rm -rf apps/web/.next",
+    "cache:clear:mesh": "rm -rf apps/mesh-gateway/.mesh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.84.0",

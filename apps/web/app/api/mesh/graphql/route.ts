@@ -1,44 +1,47 @@
 import { auth } from '@/lib/auth'
+import {
+  GraphqlRequestError,
+  graphqlRequest,
+} from '@/lib/graphql/server-client'
 import { NextResponse } from 'next/server'
-import { parseBffEnv } from '@shared/env'
-import { SignJWT } from 'jose'
-
-const env = parseBffEnv()
 
 export async function POST(request: Request) {
-  const session = await auth()
   const body = await request.json()
 
-  // Forward request to mesh gateway with auth token
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  }
+  // Get authenticated user at the route handler level where request context
+  // is available. Pass to graphqlRequest which does not call auth() internally.
+  const session = await auth()
+  const user =
+    session?.user?.id && session?.user?.email
+      ? {
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.name,
+        }
+      : null
 
-  // Extract user from session and create a JWT for the gateway
-  if (session?.user) {
-    const secret = new TextEncoder().encode(env.AUTH_SECRET)
-    const token = await new SignJWT({
-      id: session.user.id,
-      email: session.user.email,
-      name: session.user.name,
+  try {
+    const data = await graphqlRequest<unknown>(body.query, body.variables, {
+      user,
     })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('1h')
-      .sign(secret)
-
-    headers['Authorization'] = `Bearer ${token}`
-  }
-
-  const response = await fetch(
-    `${env.API_URL}:${env.MESH_GATEWAY_PORT}/graphql`,
-    {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
+    return NextResponse.json({ data }, { status: 200 })
+  } catch (error) {
+    if (error instanceof GraphqlRequestError) {
+      return NextResponse.json(
+        {
+          data: null,
+          errors: error.errors ?? [{ message: error.message }],
+        },
+        { status: error.status, statusText: error.statusText }
+      )
     }
-  )
 
-  const data = await response.json()
-  return NextResponse.json(data, { status: response.status })
+    return NextResponse.json(
+      {
+        data: null,
+        errors: [{ message: 'Unexpected error' }],
+      },
+      { status: 500, statusText: 'Internal Server Error' }
+    )
+  }
 }

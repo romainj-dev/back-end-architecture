@@ -12,6 +12,8 @@ import { GatewayAuthGuard } from '@shared/auth'
 import { AppResolver } from './app.resolver'
 import { UserModule } from './user/user.module'
 import { SupabaseModule } from './supabase/supabase.module'
+import { ExperienceModule } from './experience/experience.module'
+import { JsonObjectScalar } from './common/scalars/json-object.scalar'
 
 const moduleDir = fileURLToPath(new URL('.', import.meta.url))
 const repoRoot = resolve(moduleDir, '../../..')
@@ -37,9 +39,11 @@ const repoRoot = resolve(moduleDir, '../../..')
     }),
     SupabaseModule,
     UserModule,
+    ExperienceModule,
   ],
   providers: [
     AppResolver,
+    JsonObjectScalar,
     {
       provide: APP_GUARD,
       useClass: GatewayAuthGuard,
