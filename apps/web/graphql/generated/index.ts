@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { graphqlFetcher } from '@/lib/graphql/fetcher';
 export type Maybe<T> = T | null | undefined;
 export type InputMaybe<T> = T | null | undefined;
@@ -271,6 +271,11 @@ export type Upload__V1__UploadStatusRequest_Input = {
   upload_id?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type GetExperienceProfileQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetExperienceProfileQuery = { experienceProfile: { profile: { id: string, userId: string, headline: string | null | undefined, summary: string | null | undefined, location: string | null | undefined, yearsOfExperience: number | null | undefined, skills: Array<string>, customFields: any | null | undefined, createdAt: any, updatedAt: any } } | null | undefined };
+
 export type SaveExperienceMutationVariables = Exact<{
   input: SaveExperienceInput;
 }>;
@@ -289,6 +294,46 @@ export type GetPlanDetailsQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetPlanDetailsQuery = { plans: Array<{ id: string, code: string, price: number, createdAt: any, updatedAt: any }> };
 
 
+
+export const GetExperienceProfileDocument = `
+    query GetExperienceProfile {
+  experienceProfile {
+    profile {
+      id
+      userId
+      headline
+      summary
+      location
+      yearsOfExperience
+      skills
+      customFields
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+export const useGetExperienceProfileQuery = <
+      TData = GetExperienceProfileQuery,
+      TError = unknown
+    >(
+      variables?: GetExperienceProfileQueryVariables,
+      options?: Omit<UseQueryOptions<GetExperienceProfileQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetExperienceProfileQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetExperienceProfileQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetExperienceProfile'] : ['GetExperienceProfile', variables],
+    queryFn: graphqlFetcher<GetExperienceProfileQuery, GetExperienceProfileQueryVariables>(GetExperienceProfileDocument, variables),
+    ...options
+  }
+    )};
+
+useGetExperienceProfileQuery.getKey = (variables?: GetExperienceProfileQueryVariables) => variables === undefined ? ['GetExperienceProfile'] : ['GetExperienceProfile', variables];
+
+
+useGetExperienceProfileQuery.fetcher = (variables?: GetExperienceProfileQueryVariables, options?: RequestInit['headers']) => graphqlFetcher<GetExperienceProfileQuery, GetExperienceProfileQueryVariables>(GetExperienceProfileDocument, variables, options);
 
 export const SaveExperienceDocument = `
     mutation SaveExperience($input: SaveExperienceInput!) {

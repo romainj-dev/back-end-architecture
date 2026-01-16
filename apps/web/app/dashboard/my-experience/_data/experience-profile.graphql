@@ -1,0 +1,16 @@
+query GetExperienceProfile {
+  experienceProfile {
+    profile {
+      id
+      userId
+      headline
+      summary
+      location
+      yearsOfExperience
+      skills
+      customFields
+      createdAt
+      updatedAt
+    }
+  }
+}

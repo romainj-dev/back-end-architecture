@@ -11,7 +11,7 @@ import {
   type Step,
 } from '@/components/features/my-experience/progress-steps'
 import { GlassCard } from '@/components/ui/glass-card'
-import { uploadResume } from '../_actions/upload-resume'
+import { uploadResume } from './_actions/upload-resume'
 
 export default function InitExperiencePage() {
   const [step, setStep] = useState<Step>('input')
@@ -30,7 +30,7 @@ export default function InitExperiencePage() {
       const result = await uploadResume(formData)
 
       if (result.success) {
-        router.push('/dashboard/my-experience/_complete')
+        router.refresh()
       } else {
         setResumeError(result.error ?? 'Failed to upload resume')
         setStep('input')

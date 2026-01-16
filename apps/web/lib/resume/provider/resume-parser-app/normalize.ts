@@ -112,6 +112,10 @@ function determineRoleStatus(
   return hasBasicInfo && hasDescription ? 'complete' : 'incomplete'
 }
 
+function roundYearsOfExperience(years: number | undefined): number | null {
+  if (!years) return null
+  return Math.round(years)
+}
 /**
  * Normalizes a ResumeParser response to our internal experience format
  */
@@ -142,7 +146,9 @@ export function normalizeResumeParserAppResponse(
     headline: parsed.title ?? null,
     summary: parsed.brief ?? null,
     location,
-    yearsOfExperience: parsed.derived?.years_of_experience ?? null,
+    yearsOfExperience: roundYearsOfExperience(
+      parsed.derived?.years_of_experience
+    ),
     skills: parsed.skills ?? [],
   }
 

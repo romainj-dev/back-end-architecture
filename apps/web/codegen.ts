@@ -2,7 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   schema: '../mesh-gateway/.mesh/schema.graphql',
-  documents: './graphql/**/*.graphql',
+  documents: ['./graphql/**/*.graphql', './app/**/*.graphql'],
   generates: {
     './graphql/generated/index.ts': {
       plugins: [

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { DashboardHeader } from '@/components/features/dashboard/commons/header'
@@ -9,8 +10,17 @@ import { TechnicalSkills } from '@/components/features/my-experience/technical-s
 import { ROLES } from '@/components/features/my-experience/roles/data'
 import { RolesList } from '@/components/features/my-experience/roles/list'
 import { RolesDetail } from '@/components/features/my-experience/roles/detail'
+import {
+  getExperienceProfileClient,
+  experienceProfileKeys,
+} from '@/app/dashboard/my-experience/_data/experience-profile.query'
 
 export default function ProfileOngoingPage() {
+  useQuery({
+    queryKey: experienceProfileKeys.profile(),
+    queryFn: getExperienceProfileClient,
+  })
+
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>('role1')
 
   const selectedRole = ROLES.find((r) => r.id === selectedRoleId)
