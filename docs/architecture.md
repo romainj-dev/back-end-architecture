@@ -107,13 +107,13 @@ All services share the same env file location (repo root) and validation schema,
 
 ### Scripts (Mesh + codegen)
 
-| Command                                           | Purpose                                                |
-| ------------------------------------------------- | ------------------------------------------------------ |
-| `pnpm dev:mesh`                                   | Run Mesh gateway locally (port 4103)                   |
-| `pnpm mesh:build`                                 | Build Mesh gateway config/artifacts                    |
-| `pnpm graphql:codegen:web`                        | Build Mesh schema then generate frontend GraphQL types |
-| `pnpm connect:codegen`                            | Generate Connect RPC types from proto                  |
-| `pnpm --filter @apply-mate/shared proto:generate` | Same, scoped to shared pkg                             |
+| Command                                                      | Purpose                                                |
+| ------------------------------------------------------------ | ------------------------------------------------------ |
+| `pnpm dev:mesh`                                              | Run Mesh gateway locally (port 4103)                   |
+| `pnpm mesh:build`                                            | Build Mesh gateway config/artifacts                    |
+| `pnpm graphql:codegen:web`                                   | Build Mesh schema then generate frontend GraphQL types |
+| `pnpm connect:codegen`                                       | Generate Connect RPC types from proto                  |
+| `pnpm --filter @back-end-architecture/shared proto:generate` | Same, scoped to shared pkg                             |
 
 ## Phase 4: Federation Readiness (future)
 

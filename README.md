@@ -1,10 +1,6 @@
-# ApplyMate Monorepo
+# Backend architecture Monorepo
 
-ApplyMate helps job seekers craft AI-ready applications (resumes, cover letters,
-status tracking) powered by custom workflows.
-
-Phase 1 migrates the project into a Turborepo-managed workspace so we can grow
-the Next.js BFF, Nest.js microservices, and shared tooling in lockstep.
+This repo is used to investigate different architecture / setup / tooling on the backend
 
 ## Tech Stack (current snapshot)
 

@@ -40,7 +40,7 @@ Browser → Next.js proxy (/api/mesh/graphql) → Mesh Gateway
 
 - Mesh build: `pnpm mesh:build`
 - Frontend GraphQL types: `pnpm graphql:codegen:web` (builds Mesh schema, generates types)
-- Connect (upload) codegen: `pnpm connect:codegen` or `pnpm --filter @apply-mate/shared proto:generate`
+- Connect (upload) codegen: `pnpm connect:codegen` or `pnpm --filter @back-end-architecture/shared proto:generate`
 
 ## Streaming
 

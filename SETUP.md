@@ -46,7 +46,7 @@
 - Point `apps/web` GraphQL client + TanStack Query to the Mesh endpoint; keep operation documents aligned with a future federation-friendly schema.
 - Remove legacy WunderGraph/BFF remnants; rely on Mesh + Next.js proxy for CORS-free browser calls.
 - Frontend GraphQL codegen: `pnpm graphql:codegen:web` (builds Mesh schema, then generates types from `apps/web/graphql/*.graphql`).
-- Proto/Connect codegen: `pnpm connect:codegen` (root) or `pnpm --filter @apply-mate/shared proto:generate`.
+- Proto/Connect codegen: `pnpm connect:codegen` (root) or `pnpm --filter @backend-architecture/shared proto:generate`.
 
 ## Phase 4 · Federation Readiness (future)
 

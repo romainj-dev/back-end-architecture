@@ -722,7 +722,7 @@ const uploadServiceTransforms = [];
 const UserServiceHandler = await import("@graphql-mesh/graphql").then(handleImport);
 const userServiceHandler = new UserServiceHandler({
               name: "UserService",
-              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/graphql/user-schema.graphql","endpoint":"http://localhost:4102/graphql","operationHeaders":{"x-user-id":"{context.headers[\"x-user-id\"]}","x-user-email":"{context.headers[\"x-user-email\"]}","x-user-name":"{context.headers[\"x-user-name\"]}"}},
+              config: {"source":"/Users/romainjulien/development/back-end-architecture/packages/shared/graphql/user-schema.graphql","endpoint":"http://localhost:4102/graphql","operationHeaders":{"x-user-id":"{context.headers[\"x-user-id\"]}","x-user-email":"{context.headers[\"x-user-email\"]}","x-user-name":"{context.headers[\"x-user-name\"]}"}},
               baseDir,
               cache,
               pubsub,
@@ -733,7 +733,7 @@ const userServiceHandler = new UserServiceHandler({
 const PlanServiceHandler = await import("@graphql-mesh/graphql").then(handleImport);
 const planServiceHandler = new PlanServiceHandler({
               name: "PlanService",
-              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/graphql/plan-schema.graphql","endpoint":"http://localhost:4103/graphql","operationHeaders":{"x-user-id":"{context.headers[\"x-user-id\"]}","x-user-email":"{context.headers[\"x-user-email\"]}","x-user-name":"{context.headers[\"x-user-name\"]}"}},
+              config: {"source":"/Users/romainjulien/development/back-end-architecture/packages/shared/graphql/plan-schema.graphql","endpoint":"http://localhost:4103/graphql","operationHeaders":{"x-user-id":"{context.headers[\"x-user-id\"]}","x-user-email":"{context.headers[\"x-user-email\"]}","x-user-name":"{context.headers[\"x-user-name\"]}"}},
               baseDir,
               cache,
               pubsub,
@@ -744,7 +744,7 @@ const planServiceHandler = new PlanServiceHandler({
 const UploadServiceHandler = await import("@graphql-mesh/grpc").then(handleImport);
 const uploadServiceHandler = new UploadServiceHandler({
               name: "UploadService",
-              config: {"source":"/Users/romainjulien/development/apply-mate/packages/shared/proto/upload/v1/upload.proto","endpoint":"localhost:4200","useHTTPS":false},
+              config: {"source":"/Users/romainjulien/development/back-end-architecture/packages/shared/proto/upload/v1/upload.proto","endpoint":"localhost:4200","useHTTPS":false},
               baseDir,
               cache,
               pubsub,
@@ -769,7 +769,7 @@ sources[2] = {
         }
 const additionalTypeDefs = [parse("type UploadStatus {\n  uploadId: ID!\n  status: String!\n  progress: Int\n  message: String\n}\n\ntype Subscription {\n  uploadStatus(uploadId: ID!): UploadStatus!\n}"),] as any[];
 const additionalResolvers = await Promise.all([
-        import("../Users/romainjulien/development/apply-mate/apps/mesh-gateway/mesh.resolvers.ts")
+        import("../Users/romainjulien/development/back-end-architecture/apps/mesh-gateway/mesh.resolvers.ts")
             .then(m => m.resolvers || m.default || m)
       ]);
 const Merger = await import("@graphql-mesh/merger-stitching").then(handleImport);

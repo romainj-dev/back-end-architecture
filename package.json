@@ -1,8 +1,8 @@
 {
-  "name": "apply-mate-monorepo",
+  "name": "backend-architecture-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "Monorepo for the ApplyMate platform (Next.js web + Nest.js services)",
+  "description": "Monorepo for the backend architecture",
   "type": "module",
   "packageManager": "pnpm@9.12.2",
   "pnpm": {
@@ -25,7 +25,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "connect:codegen": "pnpm --filter @apply-mate/shared proto:generate",
+    "connect:codegen": "pnpm --filter @backend-architecture/shared proto:generate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "cache:clear:next": "rm -rf apps/web/.next",

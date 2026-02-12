@@ -20,7 +20,7 @@ This opens your browser for authentication.
 ### 2. Link to the Project
 
 ```bash
-cd /path/to/apply-mate
+cd /path/to/back-end-architecture
 supabase link --project-ref kbrooabfhmfulsmqvxym
 ```
 
